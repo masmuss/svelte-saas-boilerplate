@@ -1,0 +1,29 @@
+{
+	// One-time setup per machine: install the ESLint extension from Zed's extension panel (cmd-shift-x).
+	// Formatting needs no extension: JS/TS use Zed's built-in Prettier, Svelte uses svelte-language-server.
+	// Both read the project's own prettier.config.js, so tabs, Svelte syntax, and Tailwind class sorting stay in one place.
+	"format_on_save": "on",
+	"languages": {
+		"JavaScript": {
+			"code_actions_on_format": {
+				"source.fixAll.eslint": true
+			}
+		},
+		"TypeScript": {
+			"code_actions_on_format": {
+				"source.fixAll.eslint": true
+			}
+		},
+		"TSX": {
+			"code_actions_on_format": {
+				"source.fixAll.eslint": true
+			}
+		},
+		"Svelte": {
+			"formatter": "language_server",
+			"code_actions_on_format": {
+				"source.fixAll.eslint": true
+			}
+		}
+	}
+}

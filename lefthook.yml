@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - run: bunx --bun prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+    - run: bunx --bun eslint --fix --max-warnings=0 {staged_files}
+      stage_fixed: true
+      glob: '*.{js,cjs,mjs,ts,svelte}'
+
+commit-msg:
+  jobs:
+    - run: bunx --bun commitlint --edit {1}
