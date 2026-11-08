@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { DotsThreeVerticalIcon, FolderIcon, ShareIcon, TrashIcon } from 'phosphor-svelte';
-	import { resolve } from '$app/paths';
-	import type { RouteId } from '$app/types';
+	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
+	import FolderIcon from '@lucide/svelte/icons/folder';
+	import ForwardIcon from '@lucide/svelte/icons/forward';
+	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
-	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
+	import { useSidebar } from '#lib/components/ui/sidebar/context.svelte.js';
+	import { resolve } from '$app/paths';
+	import type { RouteId } from '$app/types';
 
 	let {
 		projects
@@ -38,13 +41,13 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Sidebar.MenuAction showOnHover {...props}>
-								<DotsThreeVerticalIcon />
+								<EllipsisIcon />
 								<span class="sr-only">More</span>
 							</Sidebar.MenuAction>
 						{/snippet}
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content
-						class="w-48"
+						class="w-48 rounded-lg"
 						side={sidebar.isMobile ? 'bottom' : 'right'}
 						align={sidebar.isMobile ? 'end' : 'start'}
 					>
@@ -53,12 +56,12 @@
 							<span>View Project</span>
 						</DropdownMenu.Item>
 						<DropdownMenu.Item>
-							<ShareIcon class="text-muted-foreground" />
+							<ForwardIcon class="text-muted-foreground" />
 							<span>Share Project</span>
 						</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item>
-							<TrashIcon class="text-muted-foreground" />
+							<Trash2Icon class="text-muted-foreground" />
 							<span>Delete Project</span>
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
@@ -66,8 +69,8 @@
 			</Sidebar.MenuItem>
 		{/each}
 		<Sidebar.MenuItem>
-			<Sidebar.MenuButton>
-				<DotsThreeVerticalIcon />
+			<Sidebar.MenuButton class="text-sidebar-foreground/70">
+				<EllipsisIcon class="text-sidebar-foreground/70" />
 				<span>More</span>
 			</Sidebar.MenuButton>
 		</Sidebar.MenuItem>

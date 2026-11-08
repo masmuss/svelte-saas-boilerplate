@@ -5,12 +5,18 @@
 		BoundingBoxIcon,
 		LifebuoyIcon,
 		MapTrifoldIcon,
-		PaperPlaneTiltIcon,
 		GearSixIcon,
 		TerminalWindowIcon,
 		ChartPieIcon
 	} from 'phosphor-svelte';
 	import type { RouteId } from '$app/types';
+	import type { Component } from 'svelte';
+
+	type Team = {
+		name: string;
+		logo: Component<{ class?: string }>;
+		plan: string;
+	};
 
 	const data = {
 		navMain: [
@@ -105,11 +111,6 @@
 				title: 'Support',
 				url: '/dashboard' as RouteId,
 				icon: LifebuoyIcon
-			},
-			{
-				title: 'Feedback',
-				url: '/dashboard' as RouteId,
-				icon: PaperPlaneTiltIcon
 			}
 		],
 		projects: [
@@ -128,55 +129,54 @@
 				url: '/dashboard' as RouteId,
 				icon: MapTrifoldIcon
 			}
-		]
+		],
+		teams: [
+			{
+				name: 'Acme Inc.',
+				logo: BoundingBoxIcon,
+				plan: 'Enterprise'
+			},
+			{
+				name: 'Acme Corp.',
+				logo: ChartPieIcon,
+				plan: 'Pro'
+			},
+			{
+				name: 'Evil Corp.',
+				logo: MapTrifoldIcon,
+				plan: 'Free'
+			}
+		] satisfies Team[]
 	};
 </script>
 
 <script lang="ts">
-	import { CommandIcon } from 'phosphor-svelte';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import NavMain from './nav-main.svelte';
 	import NavProjects from './nav-projects.svelte';
-	import NavSecondary from './nav-secondary.svelte';
 	import NavUser from './nav-user.svelte';
-	import type { User } from 'better-auth';
+	import TeamSwitcher from './team-switcher.svelte';
 	import type { ComponentProps } from 'svelte';
+	import type { User } from 'better-auth';
 
 	let {
 		ref = $bindable(null),
 		user,
+		collapsible = 'icon',
 		...restProps
 	}: ComponentProps<typeof Sidebar.Root> & { user: User } = $props();
 </script>
 
-<Sidebar.Root bind:ref variant="inset" {...restProps}>
+<Sidebar.Root bind:ref {collapsible} {...restProps}>
 	<Sidebar.Header>
-		<Sidebar.Menu>
-			<Sidebar.MenuItem>
-				<Sidebar.MenuButton size="lg">
-					{#snippet child({ props })}
-						<a href="##" {...props}>
-							<div
-								class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
-							>
-								<CommandIcon class="size-4" />
-							</div>
-							<div class="grid flex-1 text-start text-sm leading-tight">
-								<span class="truncate font-medium">Acme Inc</span>
-								<span class="truncate text-xs">Enterprise</span>
-							</div>
-						</a>
-					{/snippet}
-				</Sidebar.MenuButton>
-			</Sidebar.MenuItem>
-		</Sidebar.Menu>
+		<TeamSwitcher teams={data.teams} />
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
 		<NavProjects projects={data.projects} />
-		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<NavUser {user} />
 	</Sidebar.Footer>
+	<Sidebar.Rail />
 </Sidebar.Root>
