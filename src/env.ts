@@ -5,6 +5,15 @@ const optional = (value: string | undefined) => value;
 
 /** Supplies a fallback when the variable is unset. */
 const fallback = (value: string) => (received: string | undefined) => received ?? value;
+const emailProvider = (value: string | undefined) => {
+	const provider = value ?? 'console';
+
+	if (provider !== 'console' && provider !== 'resend') {
+		throw new Error('EMAIL_PROVIDER must be "console" or "resend"');
+	}
+
+	return provider;
+};
 
 export const variables = defineEnvVars({
 	PUBLIC_APP_NAME: {
@@ -22,7 +31,7 @@ export const variables = defineEnvVars({
 	},
 	EMAIL_PROVIDER: {
 		description: 'Outbound email transport. Use `resend` in production; defaults to logging.',
-		schema: fallback('console')
+		schema: emailProvider
 	},
 	EMAIL_FROM: {
 		description: 'The `From` address on outbound email, e.g. `App <noreply@example.com>`.',

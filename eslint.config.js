@@ -34,6 +34,14 @@ export default defineConfig(
 		}
 	},
 	{
+		files: ['src/lib/components/ui/**'],
+		rules: {
+			// Generated shadcn-svelte components accept arbitrary href values
+			// (internal routes and external URLs), so `resolve()` is not applicable.
+			'svelte/no-navigation-without-resolve': 'off'
+		}
+	},
+	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {}
