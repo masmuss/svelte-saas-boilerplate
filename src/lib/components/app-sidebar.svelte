@@ -130,7 +130,7 @@
 				icon: MapTrifoldIcon
 			}
 		],
-		teams: [
+		organizations: [
 			{
 				name: 'Acme Inc.',
 				logo: BoundingBoxIcon,
@@ -155,7 +155,7 @@
 	import NavMain from './nav-main.svelte';
 	import NavProjects from './nav-projects.svelte';
 	import NavUser from './nav-user.svelte';
-	import TeamSwitcher from './team-switcher.svelte';
+	import OrganizationSwitcher from './organization-switcher.svelte';
 	import type { ComponentProps } from 'svelte';
 	import type { User } from 'better-auth';
 
@@ -169,7 +169,7 @@
 
 <Sidebar.Root bind:ref {collapsible} {...restProps}>
 	<Sidebar.Header>
-		<TeamSwitcher teams={data.teams} />
+		<OrganizationSwitcher organizations={data.organizations} />
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />

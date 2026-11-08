@@ -6,18 +6,18 @@
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
 	import type { Component } from 'svelte';
 
-	type Team = {
+	type Organization = {
 		name: string;
 		logo: Component<{ class?: string }>;
 		plan: string;
 	};
 
-	let { teams }: { teams: Team[] } = $props();
+	let { organizations }: { organizations: Organization[] } = $props();
 	const sidebar = useSidebar();
 
 	// The initial active organization should not change when the prop array updates.
 	// svelte-ignore state_referenced_locally
-	let activeTeam = $state(teams[0]);
+	let activeOrg = $state(organizations[0]);
 </script>
 
 <Sidebar.Menu>
@@ -33,13 +33,13 @@
 						<div
 							class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
 						>
-							<activeTeam.logo class="size-4" />
+							<activeOrg.logo class="size-4" />
 						</div>
 						<div class="grid flex-1 text-start text-sm leading-tight">
 							<span class="truncate font-medium">
-								{activeTeam.name}
+								{activeOrg.name}
 							</span>
-							<span class="truncate text-xs">{activeTeam.plan}</span>
+							<span class="truncate text-xs">{activeOrg.plan}</span>
 						</div>
 						<ChevronsUpDownIcon class="ms-auto" />
 					</Sidebar.MenuButton>
@@ -52,12 +52,12 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="text-xs text-muted-foreground">Teams</DropdownMenu.Label>
-				{#each teams as team, index (team.name)}
-					<DropdownMenu.Item onSelect={() => (activeTeam = team)} class="gap-2 p-2">
+				{#each organizations as organization, index (organization.name)}
+					<DropdownMenu.Item onSelect={() => (activeOrg = organization)} class="gap-2 p-2">
 						<div class="flex size-6 items-center justify-center rounded-md border">
-							<team.logo class="size-3.5 shrink-0" />
+							<organization.logo class="size-3.5 shrink-0" />
 						</div>
-						{team.name}
+						{organization.name}
 						<DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>
 					</DropdownMenu.Item>
 				{/each}
