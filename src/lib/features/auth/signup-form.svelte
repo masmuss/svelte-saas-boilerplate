@@ -1,15 +1,30 @@
 <script lang="ts">
-	import * as Field from '#lib/components/ui/field/index.ts';
-	import { Button } from '#lib/components/ui/button/index.ts';
-	import { Input } from '#lib/components/ui/input/index.ts';
-	import { cn } from '#lib/utils.ts';
+	import * as Field from '#lib/components/ui/field/index.js';
+	import * as Form from '#lib/components/ui/form/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { cn } from '#lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { resolve } from '$app/paths';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
+	import { signupFormSchema, type SignUpFormSchema } from './schema';
 
-	let { class: className, ...restProps }: HTMLAttributes<HTMLFormElement> = $props();
+	let {
+		class: className,
+		form: initialForm,
+		...restProps
+	}: HTMLAttributes<HTMLFormElement> & { form: SuperValidated<Infer<SignUpFormSchema>> } = $props();
+
+	let form = $derived(
+		superForm(initialForm, {
+			validators: zod4Client(signupFormSchema)
+		})
+	);
+
+	const { form: formData, enhance, message } = $derived(form);
 </script>
 
-<form class={cn('flex flex-col gap-6', className)} {...restProps}>
+<form use:enhance method="POST" class={cn('flex flex-col gap-6', className)} {...restProps}>
 	<Field.Group>
 		<div class="flex flex-col items-center gap-1 text-center">
 			<h1 class="text-2xl font-bold">Create your account</h1>
@@ -17,30 +32,53 @@
 				Fill in the form below to create your account
 			</p>
 		</div>
-		<Field.Field>
-			<Field.Label for="name">Full Name</Field.Label>
-			<Input id="name" type="text" placeholder="John Doe" required />
-		</Field.Field>
-		<Field.Field>
-			<Field.Label for="email">Email</Field.Label>
-			<Input id="email" type="email" placeholder="m@example.com" required />
-			<Field.Description>
+		<Form.Field {form} name="fullName">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Full Name</Form.Label>
+					<Input {...props} bind:value={$formData.fullName} />
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="email">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Email</Form.Label>
+					<Input {...props} bind:value={$formData.email} placeholder="m@example.com" required />
+				{/snippet}
+			</Form.Control>
+			<Form.Description>
 				We'll use this to contact you. We will not share your email with anyone else.
-			</Field.Description>
-		</Field.Field>
-		<Field.Field>
-			<Field.Label for="password">Password</Field.Label>
-			<Input id="password" type="password" required />
-			<Field.Description>Must be at least 8 characters long.</Field.Description>
-		</Field.Field>
-		<Field.Field>
-			<Field.Label for="confirm-password">Confirm Password</Field.Label>
-			<Input id="confirm-password" type="password" required />
-			<Field.Description>Please confirm your password.</Field.Description>
-		</Field.Field>
-		<Field.Field>
-			<Button type="submit">Create Account</Button>
-		</Field.Field>
+			</Form.Description>
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Password</Form.Label>
+					<Input {...props} bind:value={$formData.password} type="password" required />
+				{/snippet}
+			</Form.Control>
+			<Form.Description>Must be at least 8 characters long.</Form.Description>
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="confirmPassword">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Confirm Password</Form.Label>
+					<Input {...props} bind:value={$formData.confirmPassword} type="password" required />
+				{/snippet}
+			</Form.Control>
+			<Form.Description>Please confirm your password.</Form.Description>
+			<Form.FieldErrors />
+		</Form.Field>
+		{#if $message}
+			<Field.Field>
+				<Field.Error>{$message}</Field.Error>
+			</Field.Field>
+		{/if}
+		<Form.Button>Create Account</Form.Button>
 		<Field.Field>
 			<Field.Description class="px-6 text-center">
 				Already have an account? <a href={resolve('/auth/login')}>Sign in</a>

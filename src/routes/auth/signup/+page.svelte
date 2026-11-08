@@ -1,6 +1,9 @@
-<script>
+<script lang="ts">
 	import SignupForm from '#lib/features/auth/signup-form.svelte';
 	import { CardsThreeIcon } from 'phosphor-svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 </script>
 
 <div class="grid min-h-svh lg:grid-cols-2">
@@ -17,7 +20,7 @@
 		</div>
 		<div class="flex flex-1 items-center justify-center">
 			<div class="w-full max-w-xs">
-				<SignupForm />
+				<SignupForm form={data.form} />
 			</div>
 		</div>
 	</div>
