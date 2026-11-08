@@ -1,5 +1,10 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ORIGIN } from '$app/env/private';
+
+vi.mock('$app/server', () => ({
+	getRequestEvent: () => undefined
+}));
+
 import { auth } from '#lib/server/auth.ts';
 import { db } from '#lib/server/db/index.ts';
 import { user } from '#lib/server/db/auth.schema.ts';
