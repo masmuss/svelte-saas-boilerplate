@@ -1,28 +1,82 @@
 {
 	// One-time setup per machine: install the ESLint extension from Zed's extension panel (cmd-shift-x).
-	// Formatting needs no extension: JS/TS use Zed's built-in Prettier, Svelte uses svelte-language-server.
-	// Both read the project's own prettier.config.js, so tabs, Svelte syntax, and Tailwind class sorting stay in one place.
+	// Use project-local Prettier through Bun so editor formatting matches `bun run lint`.
 	"format_on_save": "on",
 	"languages": {
 		"JavaScript": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			},
 			"code_actions_on_format": {
 				"source.fixAll.eslint": true
 			}
 		},
 		"TypeScript": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			},
 			"code_actions_on_format": {
 				"source.fixAll.eslint": true
 			}
 		},
 		"TSX": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			},
 			"code_actions_on_format": {
 				"source.fixAll.eslint": true
 			}
 		},
 		"Svelte": {
-			"formatter": "language_server",
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			},
 			"code_actions_on_format": {
 				"source.fixAll.eslint": true
+			}
+		},
+		"JSON": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"CSS": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"Markdown": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
+			}
+		},
+		"HTML": {
+			"formatter": {
+				"external": {
+					"command": "bun",
+					"arguments": ["x", "prettier", "--stdin-filepath", "{buffer_path}"]
+				}
 			}
 		}
 	}
