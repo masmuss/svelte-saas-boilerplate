@@ -28,6 +28,7 @@ export const actions: Actions = {
 
 		try {
 			await auth.api.signUpEmail({
+				headers: event.request.headers,
 				body: {
 					name: form.data.fullName,
 					email: form.data.email,

@@ -28,6 +28,7 @@ export const actions: Actions = {
 
 		try {
 			await auth.api.signInEmail({
+				headers: event.request.headers,
 				body: {
 					email: form.data.email,
 					password: form.data.password
