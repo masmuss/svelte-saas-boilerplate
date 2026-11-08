@@ -23,7 +23,7 @@
 	</div>
 	<div class="relative hidden bg-muted lg:block">
 		<img
-			src="/placeholder.svg"
+			src="https://usefulpix.com/ph/1200x630/6B7280"
 			alt="placeholder"
 			class="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
 		/>
