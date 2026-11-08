@@ -1,39 +1,34 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
-	import { Button } from '#lib/components/ui/button/index.ts';
-	import {
-		FieldGroup,
-		Field,
-		FieldLabel,
-		FieldDescription
-	} from '#lib/components/ui/field/index.ts';
-	import { Input } from '#lib/components/ui/input/index.ts';
-	import { cn, type WithElementRef } from '#lib/utils.ts';
+	import { FieldGroup, Field, FieldDescription } from '#lib/components/ui/field/index.js';
+	import * as Form from '#lib/components/ui/form/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { cn, type WithElementRef } from '#lib/utils.js';
 	import type { HTMLFormAttributes } from 'svelte/elements';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
+	import { loginFormSchema, type LoginFormSchema } from './schema';
 
 	let {
 		ref = $bindable(null),
-		form = null,
+		form: initialForm,
 		class: className,
 		...restProps
-	}: WithElementRef<HTMLFormAttributes> & { form?: { message?: string } | null } = $props();
+	}: WithElementRef<HTMLFormAttributes> & {
+		form: SuperValidated<Infer<LoginFormSchema>>;
+	} = $props();
 
-	const id = $props.id();
-
-	let submitting = $state(false);
+	let form = $derived(
+		superForm(initialForm, {
+			validators: zod4Client(loginFormSchema)
+		})
+	);
+	const { form: formData, enhance, message, submitting } = $derived(form);
 </script>
 
 <form
-	method="post"
-	action="?/signInEmail"
-	use:enhance={() => {
-		submitting = true;
-		return async ({ update }) => {
-			submitting = false;
-			await update();
-		};
-	}}
+	use:enhance
+	method="POST"
 	class={cn('flex flex-col gap-6', className)}
 	bind:this={ref}
 	{...restProps}
@@ -45,31 +40,34 @@
 				Enter your email below to login to your account
 			</p>
 		</div>
-		<Field>
-			<FieldLabel for="email-{id}">Email</FieldLabel>
-			<Input id="email-{id}" name="email" type="email" placeholder="m@example.com" required />
-		</Field>
-		<Field>
-			<div class="flex items-center">
-				<FieldLabel for="password-{id}">Password</FieldLabel>
-				<a href="##" class="ms-auto text-sm underline-offset-4 hover:underline">
-					Forgot your password?
-				</a>
-			</div>
-			<Input
-				id="password-{id}"
-				name="password"
-				type="password"
-				required
-				aria-invalid={form ? true : undefined}
-			/>
-		</Field>
-		{#if form?.message}
-			<p class="text-sm text-destructive" role="alert">{form.message}</p>
+		<Form.Field {form} name="email">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Email</Form.Label>
+					<Input {...props} bind:value={$formData.email} placeholder="m@example.com" required />
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<div class="flex items-center">
+						<Form.Label>Password</Form.Label>
+						<a href="##" class="ms-auto text-sm underline-offset-4 hover:underline">
+							Forgot your password?
+						</a>
+					</div>
+					<Input {...props} bind:value={$formData.password} type="password" required />
+				{/snippet}
+			</Form.Control>
+		</Form.Field>
+		{#if $message}
+			<p class="text-sm text-destructive" role="alert">{$message}</p>
 		{/if}
-		<Field>
-			<Button type="submit" disabled={submitting}>{submitting ? 'Signing in...' : 'Login'}</Button>
-		</Field>
+		<Form.Button type="submit" disabled={$submitting}
+			>{$submitting ? 'Signing in...' : 'Login'}</Form.Button
+		>
 		<Field>
 			<FieldDescription class="text-center">
 				Don't have an account?
