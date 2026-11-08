@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { DotsThreeVerticalIcon, FolderIcon, ShareIcon, TrashIcon } from 'phosphor-svelte';
 	import { resolve } from '$app/paths';
+	import type { RouteId } from '$app/types';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
@@ -10,7 +11,7 @@
 	}: {
 		projects: {
 			name: string;
-			url: string;
+			url: RouteId;
 			// This should be `Component` after @lucide/svelte updates types
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			icon: any;

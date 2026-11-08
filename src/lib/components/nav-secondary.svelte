@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import type { Component, ComponentProps } from 'svelte';
+	import { resolve } from '$app/paths';
+	import type { RouteId } from '$app/types';
 
 	let {
 		ref = $bindable(null),
@@ -10,7 +11,7 @@
 	}: {
 		items: {
 			title: string;
-			url: string;
+			url: RouteId;
 			icon: Component;
 		}[];
 	} & ComponentProps<typeof Sidebar.Group> = $props();

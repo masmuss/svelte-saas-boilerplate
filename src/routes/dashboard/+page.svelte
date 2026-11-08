@@ -1,15 +1,43 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import AppSidebar from '#lib/components/app-sidebar.svelte';
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
 </script>
 
-<h1 class="text-2xl font-bold">Hi, {data.user.name}!</h1>
-<p class="text-sm text-muted-foreground">Your user ID is {data.user.id}.</p>
-<form method="post" action="?/signOut" use:enhance>
-	<button
-		class="rounded-md bg-primary px-4 py-2 text-primary-foreground transition hover:bg-primary/80"
-		>Sign out</button
-	>
-</form>
+<Sidebar.Provider>
+	<AppSidebar user={data.user} />
+	<Sidebar.Inset>
+		<header class="flex h-16 shrink-0 items-center gap-2">
+			<div class="flex items-center gap-2 px-4">
+				<Sidebar.Trigger class="-ms-1" />
+				<Separator orientation="vertical" class="me-2 data-vertical:h-4 data-vertical:self-auto" />
+				<Breadcrumb.Root>
+					<Breadcrumb.List>
+						<Breadcrumb.Item class="hidden md:block">
+							<Breadcrumb.Link href="/dashboard">Dashboard</Breadcrumb.Link>
+						</Breadcrumb.Item>
+						<Breadcrumb.Separator class="hidden md:block" />
+						<Breadcrumb.Item>
+							<Breadcrumb.Page>Overview</Breadcrumb.Page>
+						</Breadcrumb.Item>
+					</Breadcrumb.List>
+				</Breadcrumb.Root>
+			</div>
+		</header>
+		<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
+			<div class="grid auto-rows-min gap-4 md:grid-cols-3">
+				<div class="aspect-video rounded-xl bg-muted/50"></div>
+				<div class="aspect-video rounded-xl bg-muted/50"></div>
+				<div class="aspect-video rounded-xl bg-muted/50"></div>
+			</div>
+			<div class="min-h-screen flex-1 rounded-xl bg-muted/50 p-6 md:min-h-min">
+				<h1 class="text-2xl font-bold">Hi, {data.user.name}!</h1>
+				<p class="text-sm text-muted-foreground">Your user ID is {data.user.id}.</p>
+			</div>
+		</div>
+	</Sidebar.Inset>
+</Sidebar.Provider>

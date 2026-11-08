@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
 	import BellIcon from '@lucide/svelte/icons/bell';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
@@ -9,6 +10,7 @@
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
+	import Button from './ui/button/button.svelte';
 
 	let {
 		user
@@ -16,7 +18,7 @@
 		user: {
 			name: string;
 			email: string;
-			avatar: string;
+			image?: string | null;
 		};
 	} = $props();
 
@@ -34,7 +36,7 @@
 						class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 					>
 						<Avatar.Root class="size-8 rounded-lg">
-							<Avatar.Image src={user.avatar} alt={user.name} />
+							<Avatar.Image src={user.image ?? undefined} alt={user.name} />
 							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
@@ -54,7 +56,7 @@
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
 						<Avatar.Root class="size-8 rounded-lg">
-							<Avatar.Image src={user.avatar} alt={user.name} />
+							<Avatar.Image src={user.image ?? undefined} alt={user.name} />
 							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
@@ -86,10 +88,14 @@
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item>
-					<LogOutIcon />
-					Log out
-				</DropdownMenu.Item>
+				<DropdownMenu.Group>
+					<form method="post" action="/dashboard?/signOut" use:enhance>
+						<Button type="submit" variant="ghost" class="w-full justify-start">
+							<LogOutIcon />
+							Log out
+						</Button>
+					</form>
+				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>

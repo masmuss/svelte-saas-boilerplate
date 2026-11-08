@@ -10,96 +10,92 @@
 		TerminalWindowIcon,
 		ChartPieIcon
 	} from 'phosphor-svelte';
+	import type { RouteId } from '$app/types';
 
 	const data = {
-		user: {
-			name: 'shadcn',
-			email: 'm@example.com',
-			avatar: '/avatars/shadcn.jpg'
-		},
 		navMain: [
 			{
 				title: 'Playground',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: TerminalWindowIcon,
 				isActive: true,
 				items: [
 					{
 						title: 'History',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Starred',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Settings',
-						url: '#'
+						url: '/dashboard' as RouteId
 					}
 				]
 			},
 			{
 				title: 'Models',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: RobotIcon,
 				items: [
 					{
 						title: 'Genesis',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Explorer',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Quantum',
-						url: '#'
+						url: '/dashboard' as RouteId
 					}
 				]
 			},
 			{
 				title: 'Documentation',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: BookOpenIcon,
 				items: [
 					{
 						title: 'Introduction',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Get Started',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Tutorials',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Changelog',
-						url: '#'
+						url: '/dashboard' as RouteId
 					}
 				]
 			},
 			{
 				title: 'Settings',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: GearSixIcon,
 				items: [
 					{
 						title: 'General',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Team',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Billing',
-						url: '#'
+						url: '/dashboard' as RouteId
 					},
 					{
 						title: 'Limits',
-						url: '#'
+						url: '/dashboard' as RouteId
 					}
 				]
 			}
@@ -107,29 +103,29 @@
 		navSecondary: [
 			{
 				title: 'Support',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: LifebuoyIcon
 			},
 			{
 				title: 'Feedback',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: PaperPlaneTiltIcon
 			}
 		],
 		projects: [
 			{
 				name: 'Design Engineering',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: BoundingBoxIcon
 			},
 			{
 				name: 'Sales & Marketing',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: ChartPieIcon
 			},
 			{
 				name: 'Travel',
-				url: '#',
+				url: '/dashboard' as RouteId,
 				icon: MapTrifoldIcon
 			}
 		]
@@ -143,9 +139,14 @@
 	import NavProjects from './nav-projects.svelte';
 	import NavSecondary from './nav-secondary.svelte';
 	import NavUser from './nav-user.svelte';
+	import type { User } from 'better-auth';
 	import type { ComponentProps } from 'svelte';
 
-	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+	let {
+		ref = $bindable(null),
+		user,
+		...restProps
+	}: ComponentProps<typeof Sidebar.Root> & { user: User } = $props();
 </script>
 
 <Sidebar.Root bind:ref variant="inset" {...restProps}>
@@ -176,6 +177,6 @@
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<NavUser user={data.user} />
+		<NavUser {user} />
 	</Sidebar.Footer>
 </Sidebar.Root>

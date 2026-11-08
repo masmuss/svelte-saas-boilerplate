@@ -1,22 +1,23 @@
 <script lang="ts">
 	import { CaretRightIcon } from 'phosphor-svelte';
-	import { resolve } from '$app/paths';
 	import * as Collapsible from '#lib/components/ui/collapsible/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import type { RouteId } from '$app/types';
+	import { resolve } from '$app/paths';
 
 	let {
 		items
 	}: {
 		items: {
 			title: string;
-			url: string;
+			url: RouteId;
 			// This should be `Component` after @lucide/svelte updates types
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			icon: any;
 			isActive?: boolean;
 			items?: {
 				title: string;
-				url: string;
+				url: RouteId;
 			}[];
 		}[];
 	} = $props();
@@ -50,7 +51,7 @@
 								<Sidebar.MenuSub>
 									{#each mainItem.items as subItem (subItem.title)}
 										<Sidebar.MenuSubItem>
-											<Sidebar.MenuSubButton href={subItem.url}>
+											<Sidebar.MenuSubButton href={resolve(subItem.url)}>
 												<span>{subItem.title}</span>
 											</Sidebar.MenuSubButton>
 										</Sidebar.MenuSubItem>
