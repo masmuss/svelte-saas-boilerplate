@@ -10,13 +10,6 @@
 		ChartPieIcon
 	} from 'phosphor-svelte';
 	import type { RouteId } from '$app/types';
-	import type { Component } from 'svelte';
-
-	type Team = {
-		name: string;
-		logo: Component<{ class?: string }>;
-		plan: string;
-	};
 
 	const data = {
 		navMain: [
@@ -129,24 +122,7 @@
 				url: '/dashboard' as RouteId,
 				icon: MapTrifoldIcon
 			}
-		],
-		organizations: [
-			{
-				name: 'Acme Inc.',
-				logo: BoundingBoxIcon,
-				plan: 'Enterprise'
-			},
-			{
-				name: 'Acme Corp.',
-				logo: ChartPieIcon,
-				plan: 'Pro'
-			},
-			{
-				name: 'Evil Corp.',
-				logo: MapTrifoldIcon,
-				plan: 'Free'
-			}
-		] satisfies Team[]
+		]
 	};
 </script>
 
@@ -158,18 +134,35 @@
 	import OrganizationSwitcher from './organization-switcher.svelte';
 	import type { ComponentProps } from 'svelte';
 	import type { User } from 'better-auth';
+	import type { Organization } from 'better-auth/plugins/organization';
+
+	const organizationIcons = [BoundingBoxIcon, ChartPieIcon, MapTrifoldIcon];
 
 	let {
 		ref = $bindable(null),
 		user,
+		organizations,
+		activeOrganizationId = null,
 		collapsible = 'icon',
 		...restProps
-	}: ComponentProps<typeof Sidebar.Root> & { user: User } = $props();
+	}: ComponentProps<typeof Sidebar.Root> & {
+		user: User;
+		organizations: Organization[];
+		activeOrganizationId: string | null;
+	} = $props();
+
+	const organizationItems = $derived(
+		organizations.map((organization, index) => ({
+			...organization,
+			logo: organizationIcons[index % organizationIcons.length],
+			plan: 'Free'
+		}))
+	);
 </script>
 
 <Sidebar.Root bind:ref {collapsible} {...restProps}>
 	<Sidebar.Header>
-		<OrganizationSwitcher organizations={data.organizations} />
+		<OrganizationSwitcher {organizationItems} {activeOrganizationId} />
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />

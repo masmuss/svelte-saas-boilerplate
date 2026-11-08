@@ -3,8 +3,14 @@ import type { Actions, PageServerLoad } from './$types';
 import { auth } from '#lib/server/auth.ts';
 import { requireUser } from '#lib/server/auth/guards.ts';
 
-export const load: PageServerLoad = (event) => {
-	return { user: requireUser(event) };
+export const load: PageServerLoad = async (event) => {
+	return {
+		user: requireUser(event),
+		organizations: await auth.api.listOrganizations({
+			headers: event.request.headers
+		}),
+		activeOrganizationId: event.locals.organizationId ?? null
+	};
 };
 
 export const actions: Actions = {

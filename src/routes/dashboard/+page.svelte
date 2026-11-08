@@ -13,7 +13,11 @@
 </svelte:head>
 
 <Sidebar.Provider>
-	<AppSidebar user={data.user} />
+	<AppSidebar
+		user={data.user}
+		organizations={data.organizations}
+		activeOrganizationId={data.activeOrganizationId}
+	/>
 	<Sidebar.Inset>
 		<header class="flex h-16 shrink-0 items-center gap-2">
 			<div class="flex items-center gap-2 px-4">
