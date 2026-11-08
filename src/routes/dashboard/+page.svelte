@@ -8,6 +8,10 @@
 	let { data }: { data: PageServerData } = $props();
 </script>
 
+<svelte:head>
+	<title>Dashboard | Svelte Boilerplate</title>
+</svelte:head>
+
 <Sidebar.Provider>
 	<AppSidebar user={data.user} />
 	<Sidebar.Inset>

@@ -8,6 +8,8 @@
 </script>
 
 <svelte:head>
+	<title>Svelte Boilerplate</title>
+	<meta name="description" content="SvelteKit SaaS boilerplate with authentication and IAM." />
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
