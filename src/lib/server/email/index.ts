@@ -1,5 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { EMAIL_FROM, EMAIL_PROVIDER, RESEND_API_KEY } from '$app/env/private';
+import { dev } from '$app/env';
 import { db } from '#lib/server/db/index.ts';
 import { emailMessage } from '#lib/server/db/email.schema.ts';
 import { consoleProvider } from './console.ts';
@@ -12,13 +13,22 @@ let provider: EmailProvider | undefined;
 function getProvider(): EmailProvider {
 	if (provider) return provider;
 
-	if (EMAIL_PROVIDER === 'resend' && RESEND_API_KEY) {
-		provider = createResendProvider(RESEND_API_KEY, EMAIL_FROM);
-	} else {
+	if (EMAIL_PROVIDER === 'console') {
 		provider = consoleProvider;
+		return provider;
 	}
 
-	return provider;
+	if (EMAIL_PROVIDER === 'resend' && RESEND_API_KEY) {
+		provider = createResendProvider(RESEND_API_KEY, EMAIL_FROM);
+		return provider;
+	}
+
+	if (dev) {
+		provider = consoleProvider;
+		return provider;
+	}
+
+	throw new Error('Email provider configuration is invalid');
 }
 
 /**

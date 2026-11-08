@@ -1,10 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { auth } from '#lib/server/auth.ts';
-import { APIError } from 'better-auth/api';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { signupFormSchema } from '#lib/features/auth/schema.ts';
+import { getAuthFailure } from '#lib/server/auth/errors.ts';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -37,13 +37,8 @@ export const actions: Actions = {
 				}
 			});
 		} catch (error) {
-			if (error instanceof APIError) {
-				return fail(400, {
-					form,
-					message: error.message || 'Registration failed'
-				});
-			}
-			return fail(500, { form, message: 'Unexpected error' });
+			const failure = getAuthFailure(error, 'Registration failed');
+			return fail(failure.status, { form, message: failure.message });
 		}
 
 		return redirect(302, '/auth/verification-pending');
