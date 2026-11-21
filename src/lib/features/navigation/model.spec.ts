@@ -22,6 +22,17 @@ describe('buildNavigation', () => {
 		});
 	});
 
+	it('shows Members when the role has ac:read', () => {
+		const navigation = buildNavigation(
+			[{ id: 'org_1', name: 'Acme' }],
+			entitlements,
+			{ ac: ['read'] },
+			'/dashboard/members'
+		);
+
+		expect(navigation.main.map((item) => item.url)).toContain('/dashboard/members');
+	});
+
 	it('hides product links without permission', () => {
 		const navigation = buildNavigation(
 			[{ id: 'org_1', name: 'Acme' }],
