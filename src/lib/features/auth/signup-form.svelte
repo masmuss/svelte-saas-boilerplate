@@ -60,7 +60,9 @@
 					<Input {...props} bind:value={$formData.password} type="password" required />
 				{/snippet}
 			</Form.Control>
-			<Form.Description>Must be at least 8 characters long.</Form.Description>
+			<Form.Description>
+				Use 8+ characters with upper and lower case letters, a number and a symbol.
+			</Form.Description>
 			<Form.FieldErrors />
 		</Form.Field>
 		<Form.Field {form} name="confirmPassword">

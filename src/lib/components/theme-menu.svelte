@@ -3,15 +3,21 @@
 	import { resetMode, setMode, userPrefersMode } from 'mode-watcher';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 
+	type ThemeMode = 'light' | 'dark' | 'system';
+
+	function isThemeMode(value: string): value is ThemeMode {
+		return value === 'light' || value === 'dark' || value === 'system';
+	}
+
 	function handleModeChange(value: string) {
-		if (value === 'light' || value === 'dark') {
-			setMode(value);
-			return;
-		}
+		if (!isThemeMode(value)) return;
 
 		if (value === 'system') {
 			resetMode();
+			return;
 		}
+
+		setMode(value);
 	}
 </script>
 

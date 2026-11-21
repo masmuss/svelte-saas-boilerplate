@@ -1,13 +1,11 @@
 <script lang="ts">
-	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-	import FolderIcon from '@lucide/svelte/icons/folder';
-	import ForwardIcon from '@lucide/svelte/icons/forward';
-	import Trash2Icon from '@lucide/svelte/icons/trash-2';
+	import { ArrowSquareOutIcon, DotsThreeIcon, FolderIcon, TrashIcon } from 'phosphor-svelte';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/context.svelte.js';
 	import { resolve } from '$app/paths';
 	import type { RouteId } from '$app/types';
+	import type { Component } from 'svelte';
 
 	let {
 		projects
@@ -15,9 +13,7 @@
 		projects: {
 			name: string;
 			url: RouteId;
-			// This should be `Component` after @lucide/svelte updates types
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			icon: any;
+			icon: Component;
 		}[];
 	} = $props();
 
@@ -41,7 +37,7 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Sidebar.MenuAction showOnHover {...props}>
-								<EllipsisIcon />
+								<DotsThreeIcon />
 								<span class="sr-only">More</span>
 							</Sidebar.MenuAction>
 						{/snippet}
@@ -56,12 +52,12 @@
 							<span>View Project</span>
 						</DropdownMenu.Item>
 						<DropdownMenu.Item>
-							<ForwardIcon class="text-muted-foreground" />
+							<ArrowSquareOutIcon class="text-muted-foreground" />
 							<span>Share Project</span>
 						</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item>
-							<Trash2Icon class="text-muted-foreground" />
+							<TrashIcon class="text-muted-foreground" />
 							<span>Delete Project</span>
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
@@ -70,7 +66,7 @@
 		{/each}
 		<Sidebar.MenuItem>
 			<Sidebar.MenuButton class="text-sidebar-foreground/70">
-				<EllipsisIcon class="text-sidebar-foreground/70" />
+				<DotsThreeIcon class="text-sidebar-foreground/70" />
 				<span>More</span>
 			</Sidebar.MenuButton>
 		</Sidebar.MenuItem>

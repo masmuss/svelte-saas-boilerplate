@@ -1,56 +1,58 @@
-# sv
+# Svelte SaaS Boilerplate
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+SvelteKit 2 / Svelte 5 starter with authentication, organizations, RBAC, billing entitlements and notifications.
 
-## Creating a project
+## Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- SvelteKit 2, Svelte 5 runes
+- shadcn-svelte (vega style, phosphor icons) + Tailwind CSS 4
+- Better Auth with Drizzle ORM and PostgreSQL
+- Vitest (unit, component and integration projects)
 
-```sh
-# create a new project
-npx sv create my-app
+## Setup
+
+```bash
+bun install
+cp .env.example .env
+bun run db:start
+bun run db:push
+bun run dev
 ```
 
-To recreate this project with the same configuration:
+Set `DATABASE_URL`, `ORIGIN` and `BETTER_AUTH_SECRET` in `.env`. Email defaults to the `console` provider; set `EMAIL_PROVIDER=resend` and `RESEND_API_KEY` to send real mail.
 
-```sh
-# recreate this project
-bun x sv@1.1.1 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:none" drizzle="database:postgresql+postgresql:postgres.js+docker:yes" better-auth="demo:password" experimental="features:async,remoteFunctions" --install bun svelte-boilerplate
+## Scripts
+
+| Command              | Purpose                            |
+| -------------------- | ---------------------------------- |
+| `bun run dev`        | Start the dev server               |
+| `bun run build`      | Production build                   |
+| `bun run preview`    | Preview the production build       |
+| `bun run check`      | `svelte-kit sync` + `svelte-check` |
+| `bun run lint`       | Prettier check + ESLint            |
+| `bun run format`     | Prettier write                     |
+| `bun run test`       | Run all Vitest projects            |
+| `bun run db:migrate` | Apply generated Drizzle migrations |
+
+## Architecture
+
+Thin SvelteKit controllers in `src/routes`, feature views in `src/lib/features`, shared UI in `src/lib/components`, and server-only capabilities in `src/lib/server`.
+
+- `src/lib/server/auth` — session helpers and auth error mapping
+- `src/lib/server/authz` — roles, permission vocabulary and resolution
+- `src/lib/server/billing` — plan entitlements and limits
+- `src/lib/server/email` — provider port with console and Resend adapters
+- `src/lib/server/notifications` — audience-targeted notifications
+- `src/lib/server/db` — Drizzle schemas and client
+
+Request-scoped `locals` are populated once in `src/hooks.server.ts`.
+
+## Testing
+
+```bash
+bun run check
+bun run lint
+bun run test
 ```
 
-## Adding features
-
-Add features to your project with `sv add`:
-
-```sh
-npx sv add
-```
-
-For example, to add Tailwind CSS:
-
-```sh
-npx sv add tailwindcss
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Database-backed integration tests live in `tests/integration` and expect the Postgres container from `compose.yaml` to be running.

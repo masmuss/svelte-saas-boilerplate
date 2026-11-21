@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
-	import BellIcon from '@lucide/svelte/icons/bell';
-	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
-	import CreditCardIcon from '@lucide/svelte/icons/credit-card';
-	import LogOutIcon from '@lucide/svelte/icons/log-out';
+	import {
+		BellIcon,
+		CaretUpDownIcon,
+		CreditCardIcon,
+		SealCheckIcon,
+		SignOutIcon
+	} from 'phosphor-svelte';
 	import * as Avatar from '#lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
-	import Button from './ui/button/button.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import ThemeMenu from './theme-menu.svelte';
 
 	let {
@@ -23,6 +25,16 @@
 	} = $props();
 
 	const sidebar = useSidebar();
+
+	const userInitials = $derived(
+		user.name
+			.trim()
+			.split(/\s+/)
+			.slice(0, 2)
+			.map((part) => part[0] ?? '')
+			.join('')
+			.toUpperCase() || '?'
+	);
 </script>
 
 <Sidebar.Menu>
@@ -37,13 +49,13 @@
 					>
 						<Avatar.Root class="size-8 rounded-lg">
 							<Avatar.Image src={user.image ?? undefined} alt={user.name} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg">{userInitials}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
 							<span class="truncate font-medium">{user.name}</span>
 							<span class="truncate text-xs">{user.email}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4" />
+						<CaretUpDownIcon class="ms-auto size-4" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -57,7 +69,7 @@
 					<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
 						<Avatar.Root class="size-8 rounded-lg">
 							<Avatar.Image src={user.image ?? undefined} alt={user.name} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg">{userInitials}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
 							<span class="truncate font-medium">{user.name}</span>
@@ -72,7 +84,7 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item>
-						<BadgeCheckIcon />
+						<SealCheckIcon />
 						Account
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
@@ -88,7 +100,7 @@
 				<DropdownMenu.Group>
 					<form method="post" action="/dashboard?/signOut" use:enhance>
 						<Button type="submit" variant="ghost" class="w-full justify-start">
-							<LogOutIcon />
+							<SignOutIcon />
 							Log out
 						</Button>
 					</form>
