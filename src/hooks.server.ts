@@ -11,10 +11,12 @@ import { getEntitlements, NO_ENTITLEMENTS } from '#lib/server/billing/entitlemen
 const PLATFORM_ROLES = ['platform_admin', 'platform_support'] as const;
 
 const handleBetterAuth: Handle = async ({ event, resolve }) => {
-	const acceptsHtml = event.request.headers.get('accept')?.includes('text/html') ?? false;
-	const isAppAsset = event.url.pathname.startsWith('/_app') || event.url.pathname.startsWith('/@');
+	const isAppAsset =
+		event.url.pathname.startsWith('/_app') ||
+		event.url.pathname.startsWith('/@') ||
+		/\.[a-z0-9]+$/i.test(event.url.pathname);
 
-	if (!acceptsHtml || isAppAsset) {
+	if (isAppAsset) {
 		return svelteKitHandler({ event, resolve, auth, building });
 	}
 

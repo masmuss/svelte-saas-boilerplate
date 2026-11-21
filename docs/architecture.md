@@ -30,7 +30,7 @@ request -> hooks.server.ts (session, role, permissions, entitlements)
         -> feature view
 ```
 
-`hooks.server.ts` skips context resolution for non-page requests and app assets. Better Auth handles its own endpoints through `svelteKitHandler`.
+`hooks.server.ts` resolves context for every non-static request, including page data requests and form actions, then hands Better Auth endpoints to `svelteKitHandler`. Skipping context for data requests would break features that re-run `load` after a client mutation.
 
 ## Feature modules
 

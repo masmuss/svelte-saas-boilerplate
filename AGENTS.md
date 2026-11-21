@@ -92,7 +92,7 @@ Routes import features through barrels. Current features: `auth`, `navigation`, 
 ## Server work
 
 - All DB queries live under `src/lib/server/**`. Drizzle schemas are segmented and re-exported from `src/lib/server/db/schema.ts`.
-- Resolve request context once in `hooks.server.ts` and read from `event.locals`. The hook skips non-page requests and app assets.
+- Resolve request context once in `hooks.server.ts` and read from `event.locals`. The hook skips static assets only; page data requests and form actions need the same context as HTML pages.
 - Auth errors map through `getAuthFailure`. Guards such as `requireUser` belong in `src/lib/server/auth/guards.ts`.
 - Email uses the `EmailProvider` port with console and Resend adapters. Templates must HTML-escape interpolated values.
 - Notifications use SQL `COUNT` and set-based updates; avoid capped row reads for counts.

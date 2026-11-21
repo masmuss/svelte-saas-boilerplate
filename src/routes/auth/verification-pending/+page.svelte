@@ -4,6 +4,10 @@
 	import { EnvelopeSimpleIcon } from 'phosphor-svelte';
 </script>
 
+<svelte:head>
+	<title>Check Your Email | Svelte Boilerplate</title>
+</svelte:head>
+
 <AuthShell>
 	<div class="flex flex-col items-center gap-4 text-center">
 		<span class="flex size-12 items-center justify-center rounded-full bg-muted">
