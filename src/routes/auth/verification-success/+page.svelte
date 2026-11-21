@@ -1,20 +1,18 @@
-<script module lang="ts">
-	import { resolve } from '$app/paths';
-</script>
-
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import AuthShell from '#lib/features/auth/auth-shell.svelte';
 	import { EnvelopeOpenIcon } from 'phosphor-svelte';
 </script>
 
-<div class="flex min-h-svh flex-col items-center justify-center gap-4 p-6 text-center">
-	<div class="flex size-12 items-center justify-center rounded-full bg-muted">
-		<EnvelopeOpenIcon class="size-6" />
+<AuthShell>
+	<div class="flex flex-col items-center gap-4 text-center">
+		<span class="flex size-12 items-center justify-center rounded-full bg-muted">
+			<EnvelopeOpenIcon class="size-6" />
+		</span>
+		<h1 class="text-2xl font-bold">Email verified</h1>
+		<p class="text-sm text-muted-foreground">Your email is confirmed. You can sign in now.</p>
+		<a href={resolve('/auth/login')} class="text-sm underline-offset-4 hover:underline">
+			Go to login
+		</a>
 	</div>
-	<h1 class="text-2xl font-bold">Email verified</h1>
-	<p class="max-w-sm text-sm text-muted-foreground">
-		Your email is confirmed. You can sign in now.
-	</p>
-	<a href={resolve('/auth/login')} class="text-sm underline-offset-4 hover:underline">
-		Go to login
-	</a>
-</div>
+</AuthShell>

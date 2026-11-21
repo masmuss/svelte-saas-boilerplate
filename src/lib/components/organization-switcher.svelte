@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
-	import { invalidateAll } from '$app/navigation';
+	import { refreshAll } from '$app/navigation';
+	import { CaretUpDownIcon } from 'phosphor-svelte';
 	import { authClient } from '#lib/auth-client.ts';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
@@ -41,7 +41,7 @@
 			return;
 		}
 
-		await invalidateAll();
+		await refreshAll();
 	}
 </script>
 
@@ -73,7 +73,7 @@
 								<span class="truncate text-xs">Create one to continue</span>
 							</div>
 						{/if}
-						<ChevronsUpDownIcon class="ms-auto" />
+						<CaretUpDownIcon class="ms-auto" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
