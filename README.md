@@ -45,7 +45,7 @@ Thin SvelteKit controllers in `src/routes`, feature views in `src/lib/features`,
 - `src/lib/server/notifications` — audience-targeted notifications
 - `src/lib/server/db` — Drizzle schemas and client
 
-Request-scoped `locals` are populated once in `src/hooks.server.ts`.
+Request-scoped `locals` are populated once in `src/hooks.server.ts`. See `docs/architecture.md` for the full layer map and dependency rules.
 
 ## Testing
 

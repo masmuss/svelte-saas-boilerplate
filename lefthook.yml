@@ -6,6 +6,8 @@ pre-commit:
     - run: bunx --bun eslint --fix --max-warnings=0 {staged_files}
       stage_fixed: true
       glob: '*.{js,cjs,mjs,ts,svelte}'
+    - run: bunx --bun svelte-check --tsconfig ./tsconfig.json
+      glob: '*.{js,cjs,mjs,ts,svelte}'
 
 commit-msg:
   jobs:
