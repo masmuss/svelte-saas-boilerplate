@@ -8,24 +8,17 @@ import { createResendProvider } from './resend.ts';
 import type { EmailProvider, EmailTemplate } from './provider.ts';
 import { renderTemplate } from './templates/index.ts';
 
-let provider: EmailProvider | undefined;
-
 function getProvider(): EmailProvider {
-	if (provider) return provider;
-
 	if (EMAIL_PROVIDER === 'console') {
-		provider = consoleProvider;
-		return provider;
+		return consoleProvider;
 	}
 
 	if (EMAIL_PROVIDER === 'resend' && RESEND_API_KEY) {
-		provider = createResendProvider(RESEND_API_KEY, EMAIL_FROM);
-		return provider;
+		return createResendProvider(RESEND_API_KEY, EMAIL_FROM);
 	}
 
 	if (dev) {
-		provider = consoleProvider;
-		return provider;
+		return consoleProvider;
 	}
 
 	throw new Error('Email provider configuration is invalid');
