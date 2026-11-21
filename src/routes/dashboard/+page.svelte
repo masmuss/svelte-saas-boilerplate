@@ -2,7 +2,7 @@
 	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { Separator } from '#lib/components/ui/separator/index.js';
-	import AppSidebar from '#lib/components/app-sidebar.svelte';
+	import { AppSidebar } from '#lib/features/navigation/index.js';
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
@@ -17,6 +17,7 @@
 		user={data.user}
 		organizations={data.organizations}
 		activeOrganizationId={data.activeOrganizationId}
+		entitlements={data.entitlements}
 	/>
 	<Sidebar.Inset>
 		<header class="flex h-16 shrink-0 items-center gap-2">

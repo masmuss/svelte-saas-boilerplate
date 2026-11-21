@@ -1,13 +1,22 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { sql } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
 import { member, organization, organizationRole, user } from '#lib/server/db/auth.schema.ts';
 import { plan, subscription } from '#lib/server/db/billing.schema.ts';
+import { emailMessage } from '#lib/server/db/email.schema.ts';
+import { notification, notificationRead } from '#lib/server/db/notification.schema.ts';
 import { can, hasPermission, resolvePermissions } from '#lib/server/authz/index.ts';
 import { getEntitlements } from '#lib/server/billing/entitlements.ts';
 import { listNotifications, notify } from '#lib/server/notifications/index.ts';
 
 let seq = 0;
 const uniq = () => `${Date.now()}-${seq++}`;
+
+beforeEach(async () => {
+	await db.execute(
+		sql`TRUNCATE TABLE ${notificationRead}, ${notification}, ${emailMessage}, ${subscription}, ${plan}, ${organizationRole}, ${member}, ${organization}, ${user} CASCADE`
+	);
+});
 
 async function seedUser(email?: string) {
 	const id = uniq();
@@ -36,10 +45,6 @@ async function seedMember(orgId: string, userId: string, role: string) {
 }
 
 describe('rbac: code baseline + db overrides', () => {
-	beforeEach(async () => {
-		await db.delete(organizationRole);
-	});
-
 	it('resolves the code baseline when no tenant override exists', async () => {
 		const permissions = await resolvePermissions('member');
 
@@ -271,7 +276,7 @@ describe('notifications: audience targeting', () => {
 			isPlatformAdmin: true
 		});
 
-		// Scope to this notice: the database is shared and not cleared between runs.
+		// Scope to this notice so the assertion is independent of other rows.
 		expect(asRegular.filter((row) => row.id === id)).toHaveLength(0);
 		expect(asPlatformAdmin.filter((row) => row.id === id)).toHaveLength(1);
 	});
