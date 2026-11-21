@@ -8,7 +8,11 @@
 	let { data, children }: LayoutProps = $props();
 
 	const sectionTitle = $derived(
-		data.activePath === '/dashboard/projects' ? 'Projects' : 'Overview'
+		data.activePath === '/dashboard/projects'
+			? 'Projects'
+			: data.activePath === '/dashboard/members'
+				? 'Members'
+				: 'Overview'
 	);
 </script>
 

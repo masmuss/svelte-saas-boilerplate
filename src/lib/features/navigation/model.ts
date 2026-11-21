@@ -1,7 +1,7 @@
 import type { RouteId } from '$app/types';
 import { hasPermission } from '#lib/permissions.ts';
 import type { EntitlementSummary, OrganizationItem, PermissionSet } from '#lib/types.ts';
-import { BoundingBoxIcon, ChartPieIcon, MapTrifoldIcon } from 'phosphor-svelte';
+import { BoundingBoxIcon, ChartPieIcon, MapTrifoldIcon, UsersThreeIcon } from 'phosphor-svelte';
 import type { Component } from 'svelte';
 
 export interface OrganizationSource {
@@ -45,6 +45,15 @@ export function buildNavigation(
 			url: '/dashboard/projects',
 			icon: BoundingBoxIcon,
 			isActive: activePath === '/dashboard/projects'
+		});
+	}
+
+	if (hasPermission(permissions, 'ac:read')) {
+		main.push({
+			title: 'Members',
+			url: '/dashboard/members',
+			icon: UsersThreeIcon,
+			isActive: activePath === '/dashboard/members'
 		});
 	}
 

@@ -28,3 +28,21 @@ export interface ProjectItem {
 	description: string | null;
 	createdAt: string;
 }
+
+export interface MemberItem {
+	id: string;
+	userId: string;
+	name: string;
+	email: string;
+	image: string | null;
+	role: string;
+	joinedAt: string;
+}
+
+export interface InvitationItem {
+	id: string;
+	email: string;
+	role: string;
+	status: string;
+	createdAt: string;
+}
