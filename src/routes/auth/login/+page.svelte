@@ -1,6 +1,5 @@
 <script lang="ts">
-	import AuthShell from '#lib/features/auth/auth-shell.svelte';
-	import LoginForm from '#lib/features/auth/login-form.svelte';
+	import { AuthShell, LoginForm } from '#lib/features/auth/index.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();

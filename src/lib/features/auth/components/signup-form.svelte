@@ -4,10 +4,11 @@
 	import { Input } from '#lib/components/ui/input/index.js';
 	import { cn } from '#lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { untrack } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { signupFormSchema, type SignUpFormSchema } from './schema';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import type { SignUpFormSchema } from '../schema.js';
+	import { createSignupForm } from '../state/signup-form.svelte.js';
 
 	let {
 		class: className,
@@ -15,13 +16,8 @@
 		...restProps
 	}: HTMLAttributes<HTMLFormElement> & { form: SuperValidated<Infer<SignUpFormSchema>> } = $props();
 
-	let form = $derived(
-		superForm(initialForm, {
-			validators: zod4Client(signupFormSchema)
-		})
-	);
-
-	const { form: formData, enhance, message } = $derived(form);
+	const form = untrack(() => createSignupForm(initialForm));
+	const { form: formData, enhance, message } = form;
 </script>
 
 <form use:enhance method="POST" class={cn('flex flex-col gap-6', className)} {...restProps}>

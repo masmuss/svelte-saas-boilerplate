@@ -1,26 +1,21 @@
 <script lang="ts">
-	import { refreshAll } from '$app/navigation';
-	import { CaretUpDownIcon } from 'phosphor-svelte';
-	import { authClient } from '#lib/auth-client.ts';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
-	import type { Component } from 'svelte';
-
-	type Organization = {
-		id: string;
-		name: string;
-		logo: Component<{ class?: string }>;
-		plan: string;
-	};
+	import type { OrganizationItem } from '#lib/types.ts';
+	import { CaretUpDownIcon } from 'phosphor-svelte';
+	import type { OrganizationSwitcherController } from '../state/organization-switcher.svelte.js';
 
 	let {
 		organizationItems,
-		activeOrganizationId
+		activeOrganizationId,
+		switcher
 	}: {
-		organizationItems: Organization[];
+		organizationItems: OrganizationItem[];
 		activeOrganizationId: string | null;
+		switcher: OrganizationSwitcherController;
 	} = $props();
+
 	const sidebar = useSidebar();
 
 	const activeOrg = $derived(
@@ -28,21 +23,6 @@
 			organizationItems[0] ??
 			null
 	);
-	let switchError = $state<string | null>(null);
-
-	async function selectOrganization(organization: Organization) {
-		switchError = null;
-		const result = await authClient.organization.setActive({
-			organizationId: organization.id
-		});
-
-		if (result.error) {
-			switchError = result.error.message ?? 'Unable to switch organization.';
-			return;
-		}
-
-		await refreshAll();
-	}
 </script>
 
 <Sidebar.Menu>
@@ -62,9 +42,7 @@
 								<activeOrg.logo class="size-4" />
 							</div>
 							<div class="grid flex-1 text-start text-sm leading-tight">
-								<span class="truncate font-medium">
-									{activeOrg.name}
-								</span>
+								<span class="truncate font-medium">{activeOrg.name}</span>
 								<span class="truncate text-xs">{activeOrg.plan}</span>
 							</div>
 						{:else}
@@ -84,12 +62,13 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="text-xs text-muted-foreground">Organizations</DropdownMenu.Label>
-				{#if switchError}
-					<DropdownMenu.Label class="text-xs text-destructive">{switchError}</DropdownMenu.Label>
+				{#if switcher.error}
+					<DropdownMenu.Label class="text-xs text-destructive">{switcher.error}</DropdownMenu.Label>
 				{/if}
 				{#each organizationItems as organization, index (organization.id)}
 					<DropdownMenu.Item
-						onSelect={() => void selectOrganization(organization)}
+						onSelect={() => void switcher.select(organization.id)}
+						disabled={switcher.pending}
 						class="gap-2 p-2"
 					>
 						<div class="flex size-6 items-center justify-center rounded-md border">

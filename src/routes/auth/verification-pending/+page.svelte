@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import AuthShell from '#lib/features/auth/auth-shell.svelte';
+	import { AuthShell } from '#lib/features/auth/index.js';
 	import { EnvelopeSimpleIcon } from 'phosphor-svelte';
 </script>
 

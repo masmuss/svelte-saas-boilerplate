@@ -12,17 +12,10 @@
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
-	import ThemeMenu from './theme-menu.svelte';
+	import ThemeMenu from '#lib/components/theme-menu.svelte';
+	import type { CurrentUser } from '#lib/types.ts';
 
-	let {
-		user
-	}: {
-		user: {
-			name: string;
-			email: string;
-			image?: string | null;
-		};
-	} = $props();
+	let { user }: { user: CurrentUser } = $props();
 
 	const sidebar = useSidebar();
 

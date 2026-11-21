@@ -5,9 +5,10 @@
 	import { Input } from '#lib/components/ui/input/index.js';
 	import { cn, type WithElementRef } from '#lib/utils.js';
 	import type { HTMLFormAttributes } from 'svelte/elements';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { loginFormSchema, type LoginFormSchema } from './schema';
+	import { untrack } from 'svelte';
+	import type { Infer, SuperValidated } from 'sveltekit-superforms';
+	import type { LoginFormSchema } from '../schema.js';
+	import { createLoginForm } from '../state/login-form.svelte.js';
 
 	let {
 		ref = $bindable(null),
@@ -18,12 +19,8 @@
 		form: SuperValidated<Infer<LoginFormSchema>>;
 	} = $props();
 
-	let form = $derived(
-		superForm(initialForm, {
-			validators: zod4Client(loginFormSchema)
-		})
-	);
-	const { form: formData, enhance, message, submitting } = $derived(form);
+	const form = untrack(() => createLoginForm(initialForm));
+	const { form: formData, enhance, message, submitting } = form;
 </script>
 
 <form
