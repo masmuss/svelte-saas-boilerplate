@@ -5,7 +5,7 @@
 		type OrganizationSwitcherController
 	} from '#lib/features/organization/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
-	import type { CurrentUser, EntitlementSummary } from '#lib/types.ts';
+	import type { CurrentUser, EntitlementSummary, PermissionSet } from '#lib/types.ts';
 	import type { ComponentProps } from 'svelte';
 	import NavMain from './nav-main.svelte';
 	import NavProjects from './nav-projects.svelte';
@@ -18,6 +18,8 @@
 		organizations,
 		activeOrganizationId = null,
 		entitlements,
+		permissions,
+		activePath,
 		collapsible = 'icon',
 		...restProps
 	}: ComponentProps<typeof Sidebar.Root> & {
@@ -25,10 +27,14 @@
 		organizations: OrganizationSource[];
 		activeOrganizationId: string | null;
 		entitlements: EntitlementSummary;
+		permissions: PermissionSet;
+		activePath: string;
 	} = $props();
 
 	const organizationSwitcher: OrganizationSwitcherController = createOrganizationSwitcher();
-	const navigation = $derived(buildNavigation(organizations, entitlements));
+	const navigation = $derived(
+		buildNavigation(organizations, entitlements, permissions, activePath)
+	);
 </script>
 
 <Sidebar.Root bind:ref {collapsible} {...restProps}>

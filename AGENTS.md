@@ -60,7 +60,7 @@ src/lib/features/<feature>/
   index.ts          # public barrel
 ```
 
-Routes import features through barrels. Current features: `auth`, `navigation`, `organization`. Add `billing` and `notification` when those UIs exist; their server capabilities already live under `src/lib/server/`.
+Routes import features through barrels. Current features: `auth`, `navigation`, `organization`, `projects`. Add `billing` and `notification` when those UIs exist; their server capabilities already live under `src/lib/server/`.
 
 ## Writing Svelte
 
@@ -86,6 +86,7 @@ Routes import features through barrels. Current features: `auth`, `navigation`, 
 - Strict mode. No implicit `any`. The only accepted `any` is a documented workaround in generated UI; prefer `Component` from `svelte` for icon props.
 - Max three arguments per function. No flag parameters. Name booleans as states.
 - Pure helpers and cross-feature types live in `src/lib/`; feature-specific logic stays in the feature.
+- Permission checks use `hasPermission` from `#lib/permissions.ts`; the server authz module re-exports it.
 - Comments explain why, never what. Delete commented-out code.
 - Files are kebab-case. Feature folders own a barrel.
 

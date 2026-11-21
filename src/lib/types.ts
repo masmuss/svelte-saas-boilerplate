@@ -21,3 +21,10 @@ export interface OrganizationItem {
 	logo: Component<{ class?: string }>;
 	plan: string;
 }
+
+export interface ProjectItem {
+	id: string;
+	name: string;
+	description: string | null;
+	createdAt: string;
+}

@@ -3,18 +3,20 @@ import { sql } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
 import { member, organization, organizationRole, user } from '#lib/server/db/auth.schema.ts';
 import { plan, subscription } from '#lib/server/db/billing.schema.ts';
+import { project } from '#lib/server/db/app.schema.ts';
 import { emailMessage } from '#lib/server/db/email.schema.ts';
 import { notification, notificationRead } from '#lib/server/db/notification.schema.ts';
 import { can, hasPermission, resolvePermissions } from '#lib/server/authz/index.ts';
 import { getEntitlements } from '#lib/server/billing/entitlements.ts';
 import { listNotifications, notify } from '#lib/server/notifications/index.ts';
+import { createProject, deleteProject, listProjects } from '#lib/server/projects/index.ts';
 
 let seq = 0;
 const uniq = () => `${Date.now()}-${seq++}`;
 
 beforeEach(async () => {
 	await db.execute(
-		sql`TRUNCATE TABLE ${notificationRead}, ${notification}, ${emailMessage}, ${subscription}, ${plan}, ${organizationRole}, ${member}, ${organization}, ${user} CASCADE`
+		sql`TRUNCATE TABLE ${notificationRead}, ${notification}, ${emailMessage}, ${project}, ${subscription}, ${plan}, ${organizationRole}, ${member}, ${organization}, ${user} CASCADE`
 	);
 });
 
@@ -325,5 +327,25 @@ describe('notifications: audience targeting', () => {
 
 		expect(afterFirst.filter((row) => row.id === id)).toHaveLength(0);
 		expect(secondStillUnread.filter((row) => row.id === id)).toHaveLength(1);
+	});
+});
+
+describe('projects: tenant scoping', () => {
+	it('lists only projects in the active organization', async () => {
+		const org = await seedOrg();
+		const other = await seedOrg();
+		await createProject(org.id, { name: 'Alpha' });
+		await createProject(other.id, { name: 'Beta' });
+
+		expect((await listProjects(org.id)).map((item) => item.name)).toEqual(['Alpha']);
+	});
+
+	it('cannot delete a project from another organization', async () => {
+		const org = await seedOrg();
+		const other = await seedOrg();
+		const project = await createProject(other.id, { name: 'Foreign' });
+
+		expect(await deleteProject(org.id, project.id)).toBe(false);
+		expect((await listProjects(other.id)).map((item) => item.id)).toEqual([project.id]);
 	});
 });

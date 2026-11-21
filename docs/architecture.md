@@ -44,7 +44,9 @@ src/lib/features/<feature>/
   index.ts
 ```
 
-Current features: `auth`, `navigation`, `organization`. Add `billing` and `notification` features when those UIs exist; their server capabilities already live under `src/lib/server/`.
+Current features: `auth`, `navigation`, `organization`, `projects`. Add `billing` and `notification` features when those UIs exist; their server capabilities already live under `src/lib/server/`.
+
+Permission checks use the pure `hasPermission` helper in `src/lib/permissions.ts`. The server authz module re-exports it so both server code and feature view models share the same vocabulary.
 
 ## Server capabilities
 
