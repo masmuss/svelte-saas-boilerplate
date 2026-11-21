@@ -1,5 +1,6 @@
 import type { RouteId } from '$app/types';
-import type { EntitlementSummary, OrganizationItem } from '#lib/types.ts';
+import { hasPermission } from '#lib/permissions.ts';
+import type { EntitlementSummary, OrganizationItem, PermissionSet } from '#lib/types.ts';
 import { BoundingBoxIcon, ChartPieIcon, MapTrifoldIcon } from 'phosphor-svelte';
 import type { Component } from 'svelte';
 
@@ -24,12 +25,31 @@ const organizationIcons = [BoundingBoxIcon, ChartPieIcon, MapTrifoldIcon];
 
 export function buildNavigation(
 	organizations: OrganizationSource[],
-	entitlements: EntitlementSummary
+	entitlements: EntitlementSummary,
+	permissions: PermissionSet,
+	activePath: string
 ): NavigationModel {
 	const plan = entitlements.planKey ?? (entitlements.isActive ? 'Active' : 'Free');
+	const main: NavigationItem[] = [
+		{
+			title: 'Overview',
+			url: '/dashboard',
+			icon: ChartPieIcon,
+			isActive: activePath === '/dashboard'
+		}
+	];
+
+	if (hasPermission(permissions, 'project:read')) {
+		main.push({
+			title: 'Projects',
+			url: '/dashboard/projects',
+			icon: BoundingBoxIcon,
+			isActive: activePath === '/dashboard/projects'
+		});
+	}
 
 	return {
-		main: [{ title: 'Overview', url: '/dashboard', icon: ChartPieIcon, isActive: true }],
+		main,
 		organizations: organizations.map((organization, index) => ({
 			...organization,
 			logo: organizationIcons[index % organizationIcons.length],
