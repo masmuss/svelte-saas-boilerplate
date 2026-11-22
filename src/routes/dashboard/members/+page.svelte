@@ -50,7 +50,11 @@
 			</div>
 		{:else}
 			<MemberList members={data.members} canManage={data.canManage} />
-			<InvitationList invitations={data.invitations} canManage={data.canManageInvitations} />
+			<InvitationList
+				invitations={data.invitations}
+				canResend={data.canResendInvitations}
+				canCancel={data.canCancelInvitations}
+			/>
 		{/if}
 	</div>
 {/if}

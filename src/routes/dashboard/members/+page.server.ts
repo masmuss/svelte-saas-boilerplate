@@ -18,7 +18,8 @@ export const load: PageServerLoad = async (event) => {
 			canManage: false,
 			members: [],
 			invitations: [],
-			canManageInvitations: false,
+			canResendInvitations: false,
+			canCancelInvitations: false,
 			form: await superValidate(zod4(inviteMemberSchema))
 		};
 	}
@@ -35,7 +36,8 @@ export const load: PageServerLoad = async (event) => {
 			hasPermission(permissions, 'member:update') && hasPermission(permissions, 'member:delete'),
 		members: members.members.map(toMemberItem),
 		invitations: invitations.map(toInvitationItem),
-		canManageInvitations: hasPermission(permissions, 'invitation:cancel'),
+		canResendInvitations: hasPermission(permissions, 'invitation:create'),
+		canCancelInvitations: hasPermission(permissions, 'invitation:cancel'),
 		form: await superValidate(zod4(inviteMemberSchema))
 	};
 };

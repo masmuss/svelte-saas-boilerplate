@@ -6,8 +6,15 @@
 	import * as Card from '#lib/components/ui/card/index.js';
 	import type { InvitationItem } from '#lib/types.ts';
 
-	let { invitations, canManage = false }: { invitations: InvitationItem[]; canManage?: boolean } =
-		$props();
+	let {
+		invitations,
+		canResend = false,
+		canCancel = false
+	}: {
+		invitations: InvitationItem[];
+		canResend?: boolean;
+		canCancel?: boolean;
+	} = $props();
 </script>
 
 {#if invitations.length > 0}
@@ -24,12 +31,14 @@
 					</div>
 					<div class="flex items-center gap-2">
 						<Badge variant="outline">{invitation.status}</Badge>
-						{#if canManage}
+						{#if canResend}
 							<form method="POST" action="?/resend" use:enhanceWithToast={'Invitation resent'}>
 								<input type="hidden" name="email" value={invitation.email} />
 								<input type="hidden" name="role" value={invitation.role.split(', ')[0]} />
 								<Button type="submit" size="sm" variant="ghost">Resend</Button>
 							</form>
+						{/if}
+						{#if canCancel}
 							<ConfirmAction
 								title="Cancel invitation?"
 								description={`${invitation.email} will no longer be able to join with this link.`}
