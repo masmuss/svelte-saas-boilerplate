@@ -49,7 +49,15 @@
 		<Form.Field {form} name="password">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Password</Form.Label>
+					<div class="flex items-center">
+						<Form.Label>Password</Form.Label>
+						<a
+							href={resolve('/auth/forgot-password')}
+							class="ms-auto text-sm underline-offset-4 hover:underline"
+						>
+							Forgot your password?
+						</a>
+					</div>
 					<Input {...props} bind:value={$formData.password} type="password" required />
 				{/snippet}
 			</Form.Control>

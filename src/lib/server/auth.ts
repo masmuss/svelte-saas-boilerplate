@@ -22,6 +22,13 @@ export const auth = betterAuth({
 				template: 'verify-email',
 				payload: { name: user.name, url }
 			});
+		},
+		sendResetPassword: async ({ user, url }: { user: User; url: string }) => {
+			await sendEmail({
+				to: user.email,
+				template: 'reset-password',
+				payload: { name: user.name, url }
+			});
 		}
 	},
 	user: {

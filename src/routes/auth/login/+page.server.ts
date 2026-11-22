@@ -6,9 +6,14 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { loginFormSchema } from '#lib/features/auth/schema.ts';
 import { getAuthFailure } from '#lib/server/auth/errors.ts';
 
+function redirectTarget(event: { url: URL }): string {
+	const target = event.url.searchParams.get('redirectTo');
+	return target?.startsWith('/') && !target.startsWith('//') ? target : '/dashboard';
+}
+
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
-		return redirect(302, '/dashboard');
+		return redirect(302, redirectTarget(event));
 	}
 	return {
 		form: await superValidate(zod4(loginFormSchema))
@@ -39,6 +44,6 @@ export const actions: Actions = {
 			return fail(failure.status, { form, message: failure.message });
 		}
 
-		return redirect(302, '/dashboard');
+		return redirect(302, redirectTarget(event));
 	}
 };
