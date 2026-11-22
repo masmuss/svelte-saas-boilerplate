@@ -3,7 +3,7 @@
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import type { ProjectItem } from '#lib/types.ts';
-	import { TrashIcon } from 'phosphor-svelte';
+	import TrashIcon from 'phosphor-svelte/lib/Trash';
 
 	let { projects, canDelete = false }: { projects: ProjectItem[]; canDelete?: boolean } = $props();
 </script>

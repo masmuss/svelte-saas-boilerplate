@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import {
-		BellIcon,
-		CaretUpDownIcon,
-		CreditCardIcon,
-		SealCheckIcon,
-		SignOutIcon
-	} from 'phosphor-svelte';
+	import BellIcon from 'phosphor-svelte/lib/Bell';
+	import CaretUpDownIcon from 'phosphor-svelte/lib/CaretUpDown';
+	import CreditCardIcon from 'phosphor-svelte/lib/CreditCard';
+	import SealCheckIcon from 'phosphor-svelte/lib/SealCheck';
+	import SignOutIcon from 'phosphor-svelte/lib/SignOut';
 	import * as Avatar from '#lib/components/ui/avatar/index.js';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';

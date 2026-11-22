@@ -1,5 +1,4 @@
 import { refreshAll } from '$app/navigation';
-import { authClient } from '#lib/auth-client.ts';
 
 export function createOrganizationSwitcher() {
 	let error = $state<string | null>(null);
@@ -10,6 +9,7 @@ export function createOrganizationSwitcher() {
 		pending = true;
 
 		try {
+			const { authClient } = await import('#lib/auth-client.ts');
 			const result = await authClient.organization.setActive({ organizationId });
 
 			if (result.error) {

@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { MonitorIcon, MoonIcon, PaletteIcon, SunIcon } from 'phosphor-svelte';
+	import MonitorIcon from 'phosphor-svelte/lib/Monitor';
+	import MoonIcon from 'phosphor-svelte/lib/Moon';
+	import PaletteIcon from 'phosphor-svelte/lib/Palette';
+	import SunIcon from 'phosphor-svelte/lib/Sun';
 	import { resetMode, setMode, userPrefersMode } from 'mode-watcher';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 

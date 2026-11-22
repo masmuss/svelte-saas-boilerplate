@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { CardsThreeIcon } from 'phosphor-svelte';
+	import CardsThreeIcon from 'phosphor-svelte/lib/CardsThree';
 	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
