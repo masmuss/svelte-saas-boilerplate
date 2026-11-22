@@ -51,16 +51,16 @@ Implemented after the audit:
 
 - Confirmation dialogs for project delete and member remove.
 - Toast feedback for create, invite, role, delete and notification mutations.
-- Navigation skeleton on the Projects page.
+- Navigation skeletons on Projects, Members, Notifications and Billing.
 - Billing usage history from `usage_record`.
 - Keyboard shortcut help and a richer Projects empty state.
+- Invitation decline confirmation plus resend/cancel actions.
 
 Priority order for what remains:
 
-1. **P1** — Invitation decline confirmation and resend/cancel actions.
-2. **P2** — Invoice history once a billing provider is integrated.
-3. **P2** — Skeletons on Members, Notifications and Billing route loads.
-4. **P3** — Full mobile device matrix for dark mode and popover/dialog behavior.
+1. **P2** — Invoice history once a billing provider is integrated.
+2. **P3** — Full mobile device matrix for dark mode and popover/dialog behavior.
+3. **P3** — Additional empty states across settings and notifications.
 
 ## Verification
 

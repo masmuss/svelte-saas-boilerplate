@@ -16,7 +16,7 @@ vi.mock('better-auth/svelte-kit', () => ({
 
 vi.mock('#lib/server/db/index.ts', () => ({ db: {} }));
 
-import { handle } from './hooks.server.js';
+import { handle, handleError } from './hooks.server.js';
 
 function makeEvent(pathname: string) {
 	return {
@@ -51,5 +51,22 @@ describe('handleBetterAuth', () => {
 
 		expect(mocks.getSession).toHaveBeenCalledOnce();
 		expect(mocks.resolve).toHaveBeenCalledOnce();
+	});
+});
+
+describe('handleError', () => {
+	it('logs a structured error without throwing', () => {
+		const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+		expect(() =>
+			handleError({
+				error: new Error('boom'),
+				event: makeEvent('/dashboard'),
+				kind: 'unknown'
+			} as never)
+		).not.toThrow();
+		expect(spy).toHaveBeenCalledWith('[server-error]', expect.any(String));
+
+		spy.mockRestore();
 	});
 });

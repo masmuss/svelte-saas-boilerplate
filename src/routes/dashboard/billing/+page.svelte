@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { navigating } from '$app/state';
 	import * as Alert from '#lib/components/ui/alert/index.js';
+	import { Skeleton } from '#lib/components/ui/skeleton/index.js';
 	import { BillingOverview, UsageHistory } from '#lib/features/billing/index.js';
 	import { hasPermission } from '#lib/permissions.ts';
 	import type { PageProps } from './$types';
@@ -7,6 +9,7 @@
 	let { data }: PageProps = $props();
 
 	const allowed = $derived(hasPermission(data.permissions, 'billing:read'));
+	const loading = $derived(navigating?.to?.route.id === '/dashboard/billing');
 </script>
 
 <svelte:head>
@@ -28,7 +31,14 @@
 				Plan, seats and feature entitlements for the active organization.
 			</p>
 		</div>
-		<BillingOverview entitlements={data.entitlements} />
-		<UsageHistory records={data.usage} />
+		{#if loading}
+			<div class="flex flex-col gap-3">
+				<Skeleton class="h-40 w-full" />
+				<Skeleton class="h-24 w-full" />
+			</div>
+		{:else}
+			<BillingOverview entitlements={data.entitlements} />
+			<UsageHistory records={data.usage} />
+		{/if}
 	</div>
 {/if}

@@ -18,6 +18,8 @@ export const load: PageServerLoad = async (event) => {
 			canManage: false,
 			members: [],
 			invitations: [],
+			canResendInvitations: false,
+			canCancelInvitations: false,
 			form: await superValidate(zod4(inviteMemberSchema))
 		};
 	}
@@ -34,6 +36,8 @@ export const load: PageServerLoad = async (event) => {
 			hasPermission(permissions, 'member:update') && hasPermission(permissions, 'member:delete'),
 		members: members.members.map(toMemberItem),
 		invitations: invitations.map(toInvitationItem),
+		canResendInvitations: hasPermission(permissions, 'invitation:create'),
+		canCancelInvitations: hasPermission(permissions, 'invitation:cancel'),
 		form: await superValidate(zod4(inviteMemberSchema))
 	};
 };
@@ -105,6 +109,56 @@ export const actions: Actions = {
 			return { success: true };
 		} catch {
 			return fail(500, { message: 'Could not remove member.' });
+		}
+	},
+
+	resend: async (event) => {
+		const organizationId = event.locals.organizationId;
+		if (!organizationId || !hasPermission(event.locals.permissions ?? {}, 'invitation:create')) {
+			return fail(403, { message: 'You cannot resend invitations.' });
+		}
+
+		const formData = await event.request.formData();
+		const email = formData.get('email');
+		const role = formData.get('role');
+		if (
+			typeof email !== 'string' ||
+			typeof role !== 'string' ||
+			!organizationRoles.includes(role as never)
+		) {
+			return fail(400, { message: 'Invalid invitation.' });
+		}
+
+		try {
+			await auth.api.createInvitation({
+				headers: event.request.headers,
+				body: { email, role, organizationId, resend: true }
+			});
+			return { success: true };
+		} catch {
+			return fail(500, { message: 'Could not resend invitation.' });
+		}
+	},
+
+	cancel: async (event) => {
+		if (!hasPermission(event.locals.permissions ?? {}, 'invitation:cancel')) {
+			return fail(403, { message: 'You cannot cancel invitations.' });
+		}
+
+		const formData = await event.request.formData();
+		const invitationId = formData.get('invitationId');
+		if (typeof invitationId !== 'string' || !invitationId) {
+			return fail(400, { message: 'Missing invitation.' });
+		}
+
+		try {
+			await auth.api.cancelInvitation({
+				headers: event.request.headers,
+				body: { invitationId }
+			});
+			return { success: true };
+		} catch {
+			return fail(500, { message: 'Could not cancel invitation.' });
 		}
 	}
 };
