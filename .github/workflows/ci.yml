@@ -48,4 +48,5 @@ jobs:
       - run: bun run check
       - run: bun run lint
       - run: bun run test
+      - run: bun run test:e2e
       - run: bun run build

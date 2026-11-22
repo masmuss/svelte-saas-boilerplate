@@ -5,6 +5,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { signupFormSchema } from '#lib/features/auth/schema.ts';
 import { getAuthFailure } from '#lib/server/auth/errors.ts';
+import { consumeRateLimit, rateLimitKey } from '#lib/server/security/rate-limit.ts';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -17,6 +18,11 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	default: async (event) => {
+		const limit = consumeRateLimit(rateLimitKey(event, 'signup'), 3, 60_000);
+		if (!limit.allowed) {
+			return fail(429, { message: `Too many attempts. Try again in ${limit.retryAfter}s.` });
+		}
+
 		const form = await superValidate(event, zod4(signupFormSchema));
 
 		if (!form.valid) {

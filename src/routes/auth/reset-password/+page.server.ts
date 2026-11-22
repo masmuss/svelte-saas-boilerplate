@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { resetPasswordSchema } from '#lib/features/auth/index.js';
 import { auth } from '#lib/server/auth.ts';
 import { getAuthFailure } from '#lib/server/auth/errors.ts';
+import { consumeRateLimit, rateLimitKey } from '#lib/server/security/rate-limit.ts';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
@@ -16,6 +17,11 @@ export const load: PageServerLoad = async (event) => ({
 
 export const actions: Actions = {
 	default: async (event) => {
+		const limit = consumeRateLimit(rateLimitKey(event, 'reset-password'), 5, 300_000);
+		if (!limit.allowed) {
+			return fail(429, { message: `Too many attempts. Try again in ${limit.retryAfter}s.` });
+		}
+
 		const form = await superValidate(event, zod4(resetPasswordSchema));
 		if (!form.valid) return fail(400, { form });
 
