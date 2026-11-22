@@ -106,6 +106,8 @@ Routes import features through barrels. Current features: `auth`, `billing`, `ia
 - Auth errors map through `getAuthFailure`. Guards such as `requireUser` belong in `src/lib/server/auth/guards.ts`.
 - Email uses the `EmailProvider` port with console and Resend adapters. Templates must HTML-escape interpolated values.
 - Notifications use SQL `COUNT` and set-based updates; avoid capped row reads for counts.
+- Auth form actions use the in-process limiter in `src/lib/server/security/rate-limit.ts`; swap in Redis only for multi-instance deployments.
+- Security headers and server error logging live in `src/hooks.server.ts`. `/health` checks the database.
 - Keep Better Auth and database imports out of client bundles. Type-only imports from server modules are acceptable only in `src/app.d.ts`.
 
 ## Testing
@@ -113,6 +115,7 @@ Routes import features through barrels. Current features: `auth`, `billing`, `ia
 - Name node specs `*.spec.ts`; name component specs `*.svelte.spec.ts`. Vitest projects are defined in `vite.config.ts`.
 - `expect` assertions are required in every test.
 - DB-backed tests live in `tests/integration/` and truncate relevant tables before each test.
+- End-to-end smoke tests live in `e2e/` and run with `bun run test:e2e`.
 - Browser component tests require a local Playwright browser binary. If unavailable, place logic tests in node specs instead of skipping verification.
 - Test behavior at boundaries: viewmodel commands, route actions, authorization, and data scoping.
 

@@ -33,6 +33,7 @@ Set `DATABASE_URL`, `ORIGIN` and `BETTER_AUTH_SECRET` in `.env`. Email defaults 
 | `bun run lint`       | Prettier check + ESLint            |
 | `bun run format`     | Prettier write                     |
 | `bun run test`       | Run all Vitest projects            |
+| `bun run test:e2e`   | Run Playwright smoke tests         |
 | `bun run db:migrate` | Apply generated Drizzle migrations |
 
 ## Architecture
