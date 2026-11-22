@@ -1,15 +1,13 @@
 import type { RouteId } from '$app/types';
 import { hasPermission } from '#lib/permissions.ts';
 import type { EntitlementSummary, OrganizationItem, PermissionSet } from '#lib/types.ts';
-import {
-	BellIcon,
-	BoundingBoxIcon,
-	ChartPieIcon,
-	CreditCardIcon,
-	GearSixIcon,
-	MapTrifoldIcon,
-	UsersThreeIcon
-} from 'phosphor-svelte';
+import BellIcon from 'phosphor-svelte/lib/Bell';
+import BoundingBoxIcon from 'phosphor-svelte/lib/BoundingBox';
+import ChartPieIcon from 'phosphor-svelte/lib/ChartPie';
+import CreditCardIcon from 'phosphor-svelte/lib/CreditCard';
+import GearSixIcon from 'phosphor-svelte/lib/GearSix';
+import MapTrifoldIcon from 'phosphor-svelte/lib/MapTrifold';
+import UsersThreeIcon from 'phosphor-svelte/lib/UsersThree';
 import type { Component } from 'svelte';
 
 export interface OrganizationSource {

@@ -71,12 +71,15 @@ src/lib/features/<feature>/
 
 Routes import features through barrels. Current features: `auth`, `billing`, `iam`, `navigation`, `notifications`, `organization`, `projects`. Server capabilities for each domain live under `src/lib/server/`.
 
+Hot shared components may import a sibling feature file directly instead of its barrel when the barrel would pull unrelated code into the initial bundle. Keep such exceptions narrow and local to the importing component.
+
 ## Writing Svelte
 
 - Use `$props`, `$state`, `$derived`, `{#snippet}` / `{@render}`, `onclick`, and callback props.
 - Use `$derived` for computed values. `$effect` only for sync with an external system.
 - Force intentional initial captures with `untrack(() => ...)` when a prop seeds a long-lived object such as `superForm`.
 - Keep markup about rendering. Put async commands and error state in a `.svelte.ts` viewmodel.
+- Lazy-load heavy clients inside viewmodel commands when they are only needed by an interaction, e.g. `await import('#lib/auth-client.ts')` for organization switching.
 - Forms use `Field.FieldGroup` + `Form.Field` wrappers from `src/lib/components/ui`. Create `superForm` once in a `state/*.svelte.ts` factory; actions use `superValidate` with the same Zod schema.
 - Use DTOs at the server boundary. Return only fields the view needs from `load`.
 - Use `refreshAll()` after client mutations that change server-loaded data. This repo uses that SvelteKit API, not `invalidateAll`.
@@ -86,7 +89,7 @@ Routes import features through barrels. Current features: `auth`, `billing`, `ia
 - Prefer existing shadcn-svelte primitives. Add new ones with `bunx --bun shadcn-svelte@latest add <name>`.
 - Use semantic tokens: `bg-primary`, `text-muted-foreground`, `bg-muted`. Raw color utilities are for theme definitions in `src/routes/layout.css`, not components.
 - Use `cn()` for conditional classes, `gap-*` instead of `space-y-*`, and `size-*` when width and height match.
-- Icons come from `phosphor-svelte`. Inside a `Button`, use `data-icon="inline-start"` or `inline-end` and no sizing class.
+- Icons come from `phosphor-svelte/lib/<Icon>` subpaths, not the root barrel. Inside a `Button`, use `data-icon="inline-start"` or `inline-end` and no sizing class.
 - Generated UI files are source owned by this repo. After `shadcn-svelte add` or `update`, read the changed files and align icons and imports with `components.json`.
 - Every overlay needs its accessible title. Reuse `Empty`, `Alert`, `Skeleton`, `Badge`, `Separator` before custom markup.
 

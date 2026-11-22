@@ -4,7 +4,7 @@
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
 	import type { OrganizationItem } from '#lib/types.ts';
-	import { CaretUpDownIcon } from 'phosphor-svelte';
+	import CaretUpDownIcon from 'phosphor-svelte/lib/CaretUpDown';
 	import type { OrganizationSwitcherController } from '../state/organization-switcher.svelte.js';
 
 	let {

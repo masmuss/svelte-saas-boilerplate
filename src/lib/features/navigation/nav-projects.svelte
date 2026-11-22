@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import type { OrganizationItem } from '#lib/types.ts';
-	import { CheckIcon } from 'phosphor-svelte';
+	import CheckIcon from 'phosphor-svelte/lib/Check';
 
 	let {
 		organizations,

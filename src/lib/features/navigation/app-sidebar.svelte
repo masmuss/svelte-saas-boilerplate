@@ -1,9 +1,9 @@
 <script lang="ts">
+	import OrganizationSwitcher from '#lib/features/organization/components/organization-switcher.svelte';
 	import {
-		OrganizationSwitcher,
 		createOrganizationSwitcher,
 		type OrganizationSwitcherController
-	} from '#lib/features/organization/index.js';
+	} from '#lib/features/organization/state/organization-switcher.svelte.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import type { CurrentUser, EntitlementSummary, PermissionSet } from '#lib/types.ts';
 	import type { ComponentProps } from 'svelte';
