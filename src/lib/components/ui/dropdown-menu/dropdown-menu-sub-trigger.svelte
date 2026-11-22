@@ -25,5 +25,5 @@
 	{...restProps}
 >
 	{@render children?.()}
-	<CaretRightIcon class="cn-rtl-flip ml-auto" />
+	<CaretRightIcon class="cn-rtl-flip ml-auto" aria-hidden="true" />
 </DropdownMenuPrimitive.SubTrigger>

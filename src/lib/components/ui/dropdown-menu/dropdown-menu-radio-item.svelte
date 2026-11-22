@@ -28,7 +28,7 @@
 			data-slot="dropdown-menu-radio-item-indicator"
 		>
 			{#if checked}
-				<CheckIcon />
+				<CheckIcon aria-hidden="true" />
 			{/if}
 		</span>
 		{@render childrenProp?.({ checked })}

@@ -21,7 +21,7 @@ export interface EntitlementSummary {
 export interface OrganizationItem {
 	id: string;
 	name: string;
-	logo: Component<{ class?: string }>;
+	logo: Component<{ class?: string; 'aria-hidden'?: boolean }>;
 	plan: string;
 }
 

@@ -46,7 +46,7 @@
 							<span class="truncate font-medium">{user.name}</span>
 							<span class="truncate text-xs">{user.email}</span>
 						</div>
-						<CaretUpDownIcon class="ms-auto size-4" />
+						<CaretUpDownIcon class="ms-auto size-4" aria-hidden="true" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -75,15 +75,15 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item>
-						<SealCheckIcon />
+						<SealCheckIcon aria-hidden="true" />
 						Account
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
-						<CreditCardIcon />
+						<CreditCardIcon aria-hidden="true" />
 						Billing
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
-						<BellIcon />
+						<BellIcon aria-hidden="true" />
 						Notifications
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
@@ -91,7 +91,7 @@
 				<DropdownMenu.Group>
 					<form method="post" action="/dashboard?/signOut" use:enhance>
 						<Button type="submit" variant="ghost" class="w-full justify-start">
-							<SignOutIcon />
+							<SignOutIcon aria-hidden="true" />
 							Log out
 						</Button>
 					</form>

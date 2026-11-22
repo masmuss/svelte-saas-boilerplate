@@ -40,7 +40,7 @@
 							<div
 								class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
 							>
-								<activeOrg.logo class="size-4" />
+								<activeOrg.logo class="size-4" aria-hidden={true} />
 							</div>
 							<div class="grid flex-1 text-start text-sm leading-tight">
 								<span class="truncate font-medium">{activeOrg.name}</span>
@@ -57,7 +57,7 @@
 								</a>
 							</div>
 						{/if}
-						<CaretUpDownIcon class="ms-auto" />
+						<CaretUpDownIcon class="ms-auto" aria-hidden={true} />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -78,7 +78,7 @@
 						class="gap-2 p-2"
 					>
 						<div class="flex size-6 items-center justify-center rounded-md border">
-							<organization.logo class="size-3.5 shrink-0" />
+							<organization.logo class="size-3.5 shrink-0" aria-hidden={true} />
 						</div>
 						{organization.name}
 						<DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut>

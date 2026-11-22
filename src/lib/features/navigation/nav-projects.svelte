@@ -27,10 +27,10 @@
 							onclick={() => onSelect(organization.id)}
 							aria-label={`Switch to ${organization.name}`}
 						>
-							<organization.logo />
+							<organization.logo aria-hidden={true} />
 							<span>{organization.name}</span>
 							{#if organization.id === activeOrganizationId}
-								<CheckIcon class="ms-auto" />
+								<CheckIcon class="ms-auto" aria-hidden="true" />
 							{/if}
 						</button>
 					{/snippet}
