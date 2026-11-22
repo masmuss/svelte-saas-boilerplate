@@ -1,10 +1,13 @@
 <script lang="ts">
+	import { navigating } from '$app/state';
 	import * as Alert from '#lib/components/ui/alert/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
+	import { Skeleton } from '#lib/components/ui/skeleton/index.js';
 	import { InvitationList, InviteMemberForm, MemberList } from '#lib/features/iam/index.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+	const loading = $derived(navigating?.to?.route.id === '/dashboard/members');
 </script>
 
 <svelte:head>
@@ -40,7 +43,14 @@
 			</Card.Root>
 		{/if}
 
-		<MemberList members={data.members} canManage={data.canManage} />
-		<InvitationList invitations={data.invitations} />
+		{#if loading}
+			<div class="flex flex-col gap-3">
+				<Skeleton class="h-24 w-full" />
+				<Skeleton class="h-24 w-full" />
+			</div>
+		{:else}
+			<MemberList members={data.members} canManage={data.canManage} />
+			<InvitationList invitations={data.invitations} canManage={data.canManageInvitations} />
+		{/if}
 	</div>
 {/if}

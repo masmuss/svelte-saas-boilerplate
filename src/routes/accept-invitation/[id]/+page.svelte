@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import ConfirmAction from '#lib/components/confirm-action.svelte';
 	import * as Alert from '#lib/components/ui/alert/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
@@ -44,10 +45,18 @@
 						<input type="hidden" name="invitationId" value={data.invitation.id} />
 						<Button type="submit">Accept invitation</Button>
 					</form>
-					<form method="POST" action="?/reject">
-						<input type="hidden" name="invitationId" value={data.invitation.id} />
-						<Button type="submit" variant="outline">Decline</Button>
-					</form>
+					<ConfirmAction
+						title="Decline invitation?"
+						description="You will lose access to this invitation link."
+						confirmLabel="Decline"
+						action="?/reject"
+						variant="outline"
+						toastMessage="Invitation declined"
+					>
+						{#snippet fields()}
+							<input type="hidden" name="invitationId" value={data.invitation.id} />
+						{/snippet}
+					</ConfirmAction>
 				</div>
 			{:else}
 				<Alert.Root>

@@ -10,6 +10,7 @@ Read these before the matching branch of work:
 - **Decision record** — Read `docs/adr/0001-feature-based-mvvm.md` before proposing a different app architecture.
 - **UI system** — Read `components.json` before adding shadcn-svelte components, icons, or theme tokens.
 - **UI/UX audit** — Read `docs/ui-ux-audit.md` before changing shared UI patterns or accessibility rules.
+- **Runbook** — Read `docs/runbook.md` for setup, environment, deployment and operations.
 - **Commands** — Read `package.json` for script names. This file does not duplicate them. Run every script through `bun run <script>`.
 - **Hooks** — Read `lefthook.yml` before changing commit or pre-commit behavior.
 

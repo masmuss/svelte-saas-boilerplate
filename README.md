@@ -16,7 +16,8 @@ SvelteKit 2 / Svelte 5 starter with authentication, organizations, RBAC, billing
 bun install
 cp .env.example .env
 bun run db:start
-bun run db:push
+bun run db:migrate
+bun run db:seed
 bun run dev
 ```
 
@@ -35,6 +36,7 @@ Set `DATABASE_URL`, `ORIGIN` and `BETTER_AUTH_SECRET` in `.env`. Email defaults 
 | `bun run test`       | Run all Vitest projects            |
 | `bun run test:e2e`   | Run Playwright smoke tests         |
 | `bun run db:migrate` | Apply generated Drizzle migrations |
+| `bun run db:seed`    | Seed a local demo workspace        |
 
 ## Architecture
 
@@ -55,6 +57,7 @@ Request-scoped `locals` are populated once in `src/hooks.server.ts`. See `docs/a
 bun run check
 bun run lint
 bun run test
+bun run test:e2e
 ```
 
 Database-backed integration tests live in `tests/integration` and expect the Postgres container from `compose.yaml` to be running.
@@ -71,3 +74,10 @@ HOST=0.0.0.0 PORT=3000 node build
 ```
 
 CI runs migrations, `check`, `lint`, tests and the production build on pushes to `dev`/`main` and on pull requests.
+
+## Docs
+
+- `docs/architecture.md` — layer map and dependency rules
+- `docs/adr/0001-feature-based-mvvm.md` — architecture decision
+- `docs/ui-ux-audit.md` — accessibility audit, benchmarks and backlog
+- `docs/runbook.md` — setup, deployment, security and operations notes

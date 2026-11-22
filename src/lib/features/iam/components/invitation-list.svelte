@@ -1,9 +1,13 @@
 <script lang="ts">
+	import ConfirmAction from '#lib/components/confirm-action.svelte';
+	import { enhanceWithToast } from '#lib/features/feedback/enhance-with-toast.js';
 	import { Badge } from '#lib/components/ui/badge/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import type { InvitationItem } from '#lib/types.ts';
 
-	let { invitations }: { invitations: InvitationItem[] } = $props();
+	let { invitations, canManage = false }: { invitations: InvitationItem[]; canManage?: boolean } =
+		$props();
 </script>
 
 {#if invitations.length > 0}
@@ -18,7 +22,27 @@
 							Invited as {invitation.role} · {new Date(invitation.createdAt).toLocaleDateString()}
 						</Card.Description>
 					</div>
-					<Badge variant="outline">{invitation.status}</Badge>
+					<div class="flex items-center gap-2">
+						<Badge variant="outline">{invitation.status}</Badge>
+						{#if canManage}
+							<form method="POST" action="?/resend" use:enhanceWithToast={'Invitation resent'}>
+								<input type="hidden" name="email" value={invitation.email} />
+								<input type="hidden" name="role" value={invitation.role.split(', ')[0]} />
+								<Button type="submit" size="sm" variant="ghost">Resend</Button>
+							</form>
+							<ConfirmAction
+								title="Cancel invitation?"
+								description={`${invitation.email} will no longer be able to join with this link.`}
+								confirmLabel="Cancel invite"
+								action="?/cancel"
+								toastMessage="Invitation cancelled"
+							>
+								{#snippet fields()}
+									<input type="hidden" name="invitationId" value={invitation.id} />
+								{/snippet}
+							</ConfirmAction>
+						{/if}
+					</div>
 				</Card.Header>
 			</Card.Root>
 		{/each}
