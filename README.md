@@ -4,6 +4,7 @@ SvelteKit 2 / Svelte 5 starter with authentication, organizations, RBAC, billing
 
 ## Stack
 
+- bun as the package manager (`bun.lock` is the only lockfile)
 - SvelteKit 2, Svelte 5 runes
 - shadcn-svelte (vega style, phosphor icons) + Tailwind CSS 4
 - Better Auth with Drizzle ORM and PostgreSQL

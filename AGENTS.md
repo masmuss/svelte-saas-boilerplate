@@ -9,10 +9,19 @@ Read these before the matching branch of work:
 - **Architecture** — Read `docs/architecture.md` before adding a feature, route, server capability, or changing layer boundaries.
 - **Decision record** — Read `docs/adr/0001-feature-based-mvvm.md` before proposing a different app architecture.
 - **UI system** — Read `components.json` before adding shadcn-svelte components, icons, or theme tokens.
-- **Commands** — Read `package.json` for script names. This file does not duplicate them.
+- **Commands** — Read `package.json` for script names. This file does not duplicate them. Run every script through `bun run <script>`.
 - **Hooks** — Read `lefthook.yml` before changing commit or pre-commit behavior.
 
 Code discovery: graph first. Use codebase-memory-mcp `search_graph`, `trace_path`, `get_code_snippet`, then `check_index_coverage`; fall back to grep for literals, config and non-code files.
+
+## Package manager
+
+Use bun. `bun.lock` is the single lockfile and the source of truth for installs.
+
+- Install dependencies: `bun install`
+- Run scripts: `bun run <script>`, e.g. `bun run check`, `bun run lint`, `bun run test`
+- One-off CLIs: `bunx --bun <cli>`, e.g. `bunx --bun shadcn-svelte@latest add <name>`
+- Keep commands bun-only across docs, scripts, hooks and CI so installs stay reproducible.
 
 ## Stack and library roles
 
@@ -74,7 +83,7 @@ Routes import features through barrels. Current features: `auth`, `billing`, `ia
 
 ## Writing UI
 
-- Prefer existing shadcn-svelte primitives. Add new ones with `npx shadcn-svelte@latest add <name>`.
+- Prefer existing shadcn-svelte primitives. Add new ones with `bunx --bun shadcn-svelte@latest add <name>`.
 - Use semantic tokens: `bg-primary`, `text-muted-foreground`, `bg-muted`. Raw color utilities are for theme definitions in `src/routes/layout.css`, not components.
 - Use `cn()` for conditional classes, `gap-*` instead of `space-y-*`, and `size-*` when width and height match.
 - Icons come from `phosphor-svelte`. Inside a `Button`, use `data-icon="inline-start"` or `inline-end` and no sizing class.
@@ -111,8 +120,8 @@ Routes import features through barrels. Current features: `auth`, `billing`, `ia
 
 Before calling work done:
 
-1. Run the `check`, `lint`, and `build` scripts from `package.json`.
-2. Run the relevant Vitest project or test file. Start the DB first for integration tests.
+1. Run `bun run check`, `bun run lint`, and `bun run build`.
+2. Run `bun run test` or the relevant Vitest project or test file. Start the DB first for integration tests.
 3. Confirm no layer rule above was broken: no feature importing `$lib/server`, no `$lib/server` import in a component, no lucide import, no `space-y-*`.
 4. Review `git diff` for accidental changes to generated UI or unrelated files.
 
