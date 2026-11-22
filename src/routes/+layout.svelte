@@ -3,6 +3,7 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import type { LayoutProps } from './$types';
 	import { ModeWatcher } from 'mode-watcher';
+	import { Toaster } from '#lib/components/ui/sonner/index.js';
 
 	let { children }: LayoutProps = $props();
 </script>
@@ -20,4 +21,5 @@
 	Skip to content
 </a>
 <ModeWatcher />
+<Toaster />
 {@render children()}

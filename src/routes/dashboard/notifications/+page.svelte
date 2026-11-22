@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Alert from '#lib/components/ui/alert/index.js';
+	import { enhanceWithToast } from '#lib/features/feedback/enhance-with-toast.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import { NotificationList } from '#lib/features/notifications/index.js';
 	import type { PageProps } from './$types';
@@ -26,7 +27,7 @@
 				</p>
 			</div>
 			{#if data.unreadCount > 0}
-				<form method="POST" action="?/readAll">
+				<form method="POST" action="?/readAll" use:enhanceWithToast={'All notifications read'}>
 					<Button type="submit" variant="outline">Mark all read</Button>
 				</form>
 			{/if}

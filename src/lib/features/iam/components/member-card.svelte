@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ConfirmAction from '#lib/components/confirm-action.svelte';
+	import { enhanceWithToast } from '#lib/features/feedback/enhance-with-toast.js';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
@@ -28,7 +30,12 @@
 		</span>
 		{#if canManage}
 			<div class="flex flex-wrap items-center gap-2">
-				<form method="POST" action="?/role" class="flex items-center gap-2">
+				<form
+					method="POST"
+					action="?/role"
+					class="flex items-center gap-2"
+					use:enhanceWithToast={'Role updated'}
+				>
 					<input type="hidden" name="memberId" value={member.id} />
 					<input type="hidden" name="role" value={selectedRole} />
 					<Select.Root
@@ -49,10 +56,16 @@
 					</Select.Root>
 					<Button type="submit" size="sm" variant="outline">Update</Button>
 				</form>
-				<form method="POST" action="?/remove">
-					<input type="hidden" name="memberId" value={member.id} />
-					<Button type="submit" size="sm" variant="ghost">Remove</Button>
-				</form>
+				<ConfirmAction
+					title="Remove member?"
+					description={`${member.name} will lose access to this organization.`}
+					confirmLabel="Remove"
+					action="?/remove"
+				>
+					{#snippet fields()}
+						<input type="hidden" name="memberId" value={member.id} />
+					{/snippet}
+				</ConfirmAction>
 			</div>
 		{/if}
 	</Card.Footer>
