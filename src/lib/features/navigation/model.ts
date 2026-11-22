@@ -17,9 +17,11 @@ export interface OrganizationSource {
 	name: string;
 }
 
+export type NavigationRoute = Exclude<RouteId, '/accept-invitation/[id]'>;
+
 export interface NavigationItem {
 	title: string;
-	url: RouteId;
+	url: NavigationRoute;
 	icon: Component;
 	isActive?: boolean;
 }

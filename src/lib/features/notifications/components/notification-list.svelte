@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { RouteId } from '$app/types';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
@@ -13,7 +12,7 @@
 
 	function resolvedHref(href: string | null): string | null {
 		if (!href) return null;
-		return href.startsWith('http') ? href : resolve(href as RouteId);
+		return href.startsWith('http') ? href : (resolve as (route: string) => string)(href);
 	}
 </script>
 
