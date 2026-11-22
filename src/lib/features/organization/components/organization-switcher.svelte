@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 	import { useSidebar } from '#lib/components/ui/sidebar/index.js';
@@ -48,7 +49,12 @@
 						{:else}
 							<div class="grid flex-1 text-start text-sm leading-tight">
 								<span class="truncate font-medium">No organization</span>
-								<span class="truncate text-xs">Create one to continue</span>
+								<a
+									href={resolve('/dashboard/organization')}
+									class="truncate text-xs underline underline-offset-4 hover:underline"
+								>
+									Create one to continue
+								</a>
 							</div>
 						{/if}
 						<CaretUpDownIcon class="ms-auto" />

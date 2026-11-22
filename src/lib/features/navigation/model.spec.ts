@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { buildNavigation } from './model.js';
 
-const entitlements = { planKey: 'pro', isActive: true, features: {} };
+const entitlements = {
+	planKey: 'pro',
+	status: 'active',
+	isActive: true,
+	seats: 5,
+	limits: {},
+	features: {}
+};
 
 describe('buildNavigation', () => {
 	it('uses the active plan key for organization labels', () => {
@@ -47,7 +54,7 @@ describe('buildNavigation', () => {
 	it('falls back to a free plan without an active subscription', () => {
 		const navigation = buildNavigation(
 			[{ id: 'org_1', name: 'Acme' }],
-			{ planKey: null, isActive: false, features: {} },
+			{ planKey: null, status: null, isActive: false, seats: 1, limits: {}, features: {} },
 			{},
 			'/dashboard'
 		);

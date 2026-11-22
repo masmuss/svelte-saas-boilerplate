@@ -60,7 +60,7 @@ src/lib/features/<feature>/
   index.ts          # public barrel
 ```
 
-Routes import features through barrels. Current features: `auth`, `iam`, `navigation`, `organization`, `projects`. Add `billing` and `notification` when those UIs exist; their server capabilities already live under `src/lib/server/`.
+Routes import features through barrels. Current features: `auth`, `billing`, `iam`, `navigation`, `notifications`, `organization`, `projects`. Server capabilities for each domain live under `src/lib/server/`.
 
 ## Writing Svelte
 

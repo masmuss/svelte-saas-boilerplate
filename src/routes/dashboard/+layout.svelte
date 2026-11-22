@@ -12,7 +12,13 @@
 			? 'Projects'
 			: data.activePath === '/dashboard/members'
 				? 'Members'
-				: 'Overview'
+				: data.activePath === '/dashboard/billing'
+					? 'Billing'
+					: data.activePath === '/dashboard/notifications'
+						? 'Notifications'
+						: data.activePath === '/dashboard/organization'
+							? 'Organization'
+							: 'Overview'
 	);
 </script>
 
