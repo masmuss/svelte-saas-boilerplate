@@ -14,7 +14,7 @@
 				<Sidebar.MenuButton isActive={item.isActive} tooltipContent={item.title}>
 					{#snippet child({ props })}
 						<a href={resolve(item.url)} {...props}>
-							<item.icon />
+							<item.icon aria-hidden="true" />
 							<span>{item.title}</span>
 						</a>
 					{/snippet}

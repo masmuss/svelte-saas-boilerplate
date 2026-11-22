@@ -38,7 +38,7 @@
 						<form method="POST" action="?/delete">
 							<input type="hidden" name="id" value={item.id} />
 							<Button type="submit" variant="ghost" size="icon" aria-label={`Delete ${item.name}`}>
-								<TrashIcon />
+								<TrashIcon aria-hidden="true" />
 							</Button>
 						</form>
 					{/if}

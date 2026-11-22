@@ -34,7 +34,7 @@
 	<Sidebar.Inset>
 		<header class="flex h-16 shrink-0 items-center gap-2">
 			<div class="flex items-center gap-2 px-4">
-				<Sidebar.Trigger class="-ms-1" />
+				<Sidebar.Trigger class="-ms-1 size-11 md:size-9" />
 				<Separator orientation="vertical" class="me-2 data-vertical:h-4 data-vertical:self-auto" />
 				<Breadcrumb.Root>
 					<Breadcrumb.List>
@@ -49,8 +49,8 @@
 				</Breadcrumb.Root>
 			</div>
 		</header>
-		<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
+		<main id="main-content" class="flex flex-1 flex-col gap-4 p-4 pt-0">
 			{@render children()}
-		</div>
+		</main>
 	</Sidebar.Inset>
 </Sidebar.Provider>

@@ -11,7 +11,7 @@
 <AuthShell>
 	<div class="flex flex-col items-center gap-4 text-center">
 		<span class="flex size-12 items-center justify-center rounded-full bg-muted">
-			<EnvelopeSimpleIcon class="size-6" />
+			<EnvelopeSimpleIcon class="size-6" aria-hidden="true" />
 		</span>
 		<h1 class="text-2xl font-bold">Check your email</h1>
 		<p class="text-sm text-muted-foreground">

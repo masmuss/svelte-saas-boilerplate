@@ -19,5 +19,5 @@
 	)}
 	{...restProps}
 >
-	<CaretUpIcon />
+	<CaretUpIcon aria-hidden="true" />
 </SelectPrimitive.ScrollUpButton>

@@ -38,7 +38,7 @@
 					if (value) $formData.role = value as OrganizationRole;
 				}}
 			>
-				<Select.Trigger class="w-full">
+				<Select.Trigger class="w-full" aria-label="Role">
 					<Select.Value placeholder="Select a role" />
 				</Select.Trigger>
 				<Select.Content>

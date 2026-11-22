@@ -19,5 +19,5 @@
 	)}
 	{...restProps}
 >
-	<CaretDownIcon />
+	<CaretDownIcon aria-hidden="true" />
 </SelectPrimitive.ScrollDownButton>

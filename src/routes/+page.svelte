@@ -7,7 +7,10 @@
 	<title>Svelte Boilerplate</title>
 </svelte:head>
 
-<main class="flex min-h-svh flex-col items-center justify-center gap-6 px-6 text-center">
+<main
+	id="main-content"
+	class="flex min-h-svh flex-col items-center justify-center gap-6 px-6 text-center"
+>
 	<div class="flex flex-col gap-2">
 		<h1 class="text-3xl font-bold tracking-tight">Svelte Boilerplate</h1>
 		<p class="max-w-md text-sm text-muted-foreground">

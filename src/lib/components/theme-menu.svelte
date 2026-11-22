@@ -26,7 +26,7 @@
 
 <DropdownMenu.Sub>
 	<DropdownMenu.SubTrigger>
-		<PaletteIcon />
+		<PaletteIcon aria-hidden="true" />
 		Theme
 	</DropdownMenu.SubTrigger>
 	<DropdownMenu.SubContent>
@@ -34,15 +34,15 @@
 			<DropdownMenu.Label>Appearance</DropdownMenu.Label>
 			<DropdownMenu.RadioGroup value={userPrefersMode.current} onValueChange={handleModeChange}>
 				<DropdownMenu.RadioItem value="light">
-					<SunIcon />
+					<SunIcon aria-hidden="true" />
 					Light
 				</DropdownMenu.RadioItem>
 				<DropdownMenu.RadioItem value="dark">
-					<MoonIcon />
+					<MoonIcon aria-hidden="true" />
 					Dark
 				</DropdownMenu.RadioItem>
 				<DropdownMenu.RadioItem value="system">
-					<MonitorIcon />
+					<MonitorIcon aria-hidden="true" />
 					System
 				</DropdownMenu.RadioItem>
 			</DropdownMenu.RadioGroup>

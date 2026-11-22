@@ -31,6 +31,6 @@
 	}}
 	{...restProps}
 >
-	<SidebarIcon class="cn-rtl-flip" />
+	<SidebarIcon class="cn-rtl-flip" aria-hidden="true" />
 	<span class="sr-only">Toggle Sidebar</span>
 </Button>
