@@ -14,7 +14,10 @@ export const load: LayoutServerLoad = async (event) => {
 		activeOrganizationId: event.locals.organizationId ?? null,
 		entitlements: {
 			planKey: entitlements?.planKey ?? null,
+			status: entitlements?.status ?? null,
 			isActive: entitlements?.isActive ?? false,
+			seats: entitlements?.seats ?? 1,
+			limits: entitlements?.limits ?? {},
 			features: entitlements?.features ?? {}
 		},
 		permissions: event.locals.permissions ?? {},

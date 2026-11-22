@@ -4,6 +4,7 @@ SvelteKit 2 / Svelte 5 starter with authentication, organizations, RBAC, billing
 
 ## Stack
 
+- bun as the package manager (`bun.lock` is the only lockfile)
 - SvelteKit 2, Svelte 5 runes
 - shadcn-svelte (vega style, phosphor icons) + Tailwind CSS 4
 - Better Auth with Drizzle ORM and PostgreSQL
@@ -56,3 +57,16 @@ bun run test
 ```
 
 Database-backed integration tests live in `tests/integration` and expect the Postgres container from `compose.yaml` to be running.
+
+## Deployment
+
+The build uses `@sveltejs/adapter-node` and produces a self-hosted server in `build/`.
+
+Required environment variables: `DATABASE_URL`, `ORIGIN` and `BETTER_AUTH_SECRET`. For real email delivery, also set `EMAIL_PROVIDER=resend` and `RESEND_API_KEY`.
+
+```bash
+bun run db:migrate
+HOST=0.0.0.0 PORT=3000 node build
+```
+
+CI runs migrations, `check`, `lint`, tests and the production build on pushes to `dev`/`main` and on pull requests.
