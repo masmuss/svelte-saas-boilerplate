@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Alert from '#lib/components/ui/alert/index.js';
-	import { BillingOverview } from '#lib/features/billing/index.js';
+	import { BillingOverview, UsageHistory } from '#lib/features/billing/index.js';
 	import { hasPermission } from '#lib/permissions.ts';
 	import type { PageProps } from './$types';
 
@@ -29,5 +29,6 @@
 			</p>
 		</div>
 		<BillingOverview entitlements={data.entitlements} />
+		<UsageHistory records={data.usage} />
 	</div>
 {/if}

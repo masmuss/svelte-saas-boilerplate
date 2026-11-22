@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { enhanceWithToast } from '#lib/features/feedback/enhance-with-toast.js';
 	import { Badge } from '#lib/components/ui/badge/index.js';
 	import { Button } from '#lib/components/ui/button/index.js';
 	import * as Card from '#lib/components/ui/card/index.js';
@@ -47,7 +48,7 @@
 						{/if}
 					</div>
 					{#if !notification.readAt && canMarkRead}
-						<form method="POST" action="?/read">
+						<form method="POST" action="?/read" use:enhanceWithToast={'Marked as read'}>
 							<input type="hidden" name="id" value={notification.id} />
 							<Button type="submit" size="sm" variant="outline">Mark read</Button>
 						</form>

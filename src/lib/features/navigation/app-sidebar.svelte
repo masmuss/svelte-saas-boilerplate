@@ -10,6 +10,7 @@
 	import NavMain from './nav-main.svelte';
 	import NavProjects from './nav-projects.svelte';
 	import NavUser from './nav-user.svelte';
+	import ShortcutHelp from './components/shortcut-help.svelte';
 	import { buildNavigation, type OrganizationSource } from './model.js';
 
 	let {
@@ -53,7 +54,8 @@
 			onSelect={organizationSwitcher.select}
 		/>
 	</Sidebar.Content>
-	<Sidebar.Footer>
+	<Sidebar.Footer class="flex flex-col gap-1">
+		<ShortcutHelp />
 		<NavUser {user} />
 	</Sidebar.Footer>
 	<Sidebar.Rail />

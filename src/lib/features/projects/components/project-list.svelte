@@ -1,19 +1,22 @@
 <script lang="ts">
+	import ConfirmAction from '#lib/components/confirm-action.svelte';
 	import * as Card from '#lib/components/ui/card/index.js';
 	import { Badge } from '#lib/components/ui/badge/index.js';
-	import { Button } from '#lib/components/ui/button/index.js';
 	import type { ProjectItem } from '#lib/types.ts';
-	import TrashIcon from 'phosphor-svelte/lib/Trash';
+	import FolderOpenIcon from 'phosphor-svelte/lib/FolderOpen';
 
 	let { projects, canDelete = false }: { projects: ProjectItem[]; canDelete?: boolean } = $props();
 </script>
 
 {#if projects.length === 0}
 	<Card.Root>
-		<Card.Header>
+		<Card.Header class="flex flex-col items-center gap-2 py-8 text-center">
+			<span class="flex size-12 items-center justify-center rounded-full bg-muted">
+				<FolderOpenIcon class="size-6" aria-hidden={true} />
+			</span>
 			<Card.Title>No projects yet</Card.Title>
 			<Card.Description>
-				Create your first project to start organizing work for this organization.
+				Use the New project form above to create the first project for this organization.
 			</Card.Description>
 		</Card.Header>
 	</Card.Root>
@@ -35,12 +38,16 @@
 						{new Date(item.createdAt).toLocaleDateString()}
 					</span>
 					{#if canDelete}
-						<form method="POST" action="?/delete">
-							<input type="hidden" name="id" value={item.id} />
-							<Button type="submit" variant="ghost" size="icon" aria-label={`Delete ${item.name}`}>
-								<TrashIcon aria-hidden="true" />
-							</Button>
-						</form>
+						<ConfirmAction
+							title="Delete project?"
+							description={`This permanently removes ${item.name}. This action cannot be undone.`}
+							confirmLabel="Delete"
+							action="?/delete"
+						>
+							{#snippet fields()}
+								<input type="hidden" name="id" value={item.id} />
+							{/snippet}
+						</ConfirmAction>
 					{/if}
 				</Card.Footer>
 			</Card.Root>

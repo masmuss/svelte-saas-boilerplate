@@ -50,6 +50,14 @@ export interface InvitationItem {
 	createdAt: string;
 }
 
+export interface UsageRecordItem {
+	id: string;
+	metric: string;
+	quantity: number;
+	periodStart: string;
+	periodEnd: string;
+}
+
 export interface NotificationItem {
 	id: string;
 	title: string;

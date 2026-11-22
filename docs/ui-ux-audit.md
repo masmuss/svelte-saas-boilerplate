@@ -47,15 +47,20 @@ References used as pattern benchmarks: [shadcn-svelte sidebar](https://shadcn-sv
 
 ## Remaining backlog
 
-Priority order:
+Implemented after the audit:
 
-1. **P1** — Confirmation dialogs for project delete, member remove, and invitation decline.
-2. **P1** — Toast feedback for successful mutations; keep inline errors near fields.
-3. **P2** — Loading skeletons for route-sensitive sections during navigation and actions.
-4. **P2** — Billing usage/invoice table once billing data exists.
-5. **P2** — Keyboard shortcut help and documented shortcuts.
-6. **P3** — Richer empty states with primary action and short explanation.
-7. **P3** — Full mobile device matrix for dark mode and popover/dialog behavior.
+- Confirmation dialogs for project delete and member remove.
+- Toast feedback for create, invite, role, delete and notification mutations.
+- Navigation skeleton on the Projects page.
+- Billing usage history from `usage_record`.
+- Keyboard shortcut help and a richer Projects empty state.
+
+Priority order for what remains:
+
+1. **P1** — Invitation decline confirmation and resend/cancel actions.
+2. **P2** — Invoice history once a billing provider is integrated.
+3. **P2** — Skeletons on Members, Notifications and Billing route loads.
+4. **P3** — Full mobile device matrix for dark mode and popover/dialog behavior.
 
 ## Verification
 
