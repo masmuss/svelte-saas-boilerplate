@@ -42,9 +42,9 @@ export const notification = pgTable(
 );
 
 /**
- * Per-user read state. Keeping it separate means `markRead(id)` always has a
- * `userId` predicate to scope on, so a notification id can never be read by
- * someone it was not addressed to.
+ * Per-user read state. Rows are created only after the notification's audience
+ * scope has been checked, so a notification id cannot be replayed by someone it
+ * was not addressed to.
  */
 export const notificationRead = pgTable(
 	'notification_read',

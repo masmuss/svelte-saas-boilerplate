@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
 import { member, organization, organizationRole, user } from '#lib/server/db/auth.schema.ts';
 import { plan, subscription } from '#lib/server/db/billing.schema.ts';
@@ -8,7 +8,14 @@ import { emailMessage } from '#lib/server/db/email.schema.ts';
 import { notification, notificationRead } from '#lib/server/db/notification.schema.ts';
 import { can, hasPermission, resolvePermissions } from '#lib/server/authz/index.ts';
 import { getEntitlements } from '#lib/server/billing/entitlements.ts';
-import { listNotifications, notify } from '#lib/server/notifications/index.ts';
+import {
+	countUnread,
+	getMemberMemberships,
+	listNotifications,
+	markAllRead,
+	markRead,
+	notify
+} from '#lib/server/notifications/index.ts';
 import { createProject, deleteProject, listProjects } from '#lib/server/projects/index.ts';
 
 let seq = 0;
@@ -137,6 +144,13 @@ describe('rbac: code baseline + db overrides', () => {
 		// From admin, which member lacks on its own
 		expect(hasPermission(permissions, 'billing:read')).toBe(true);
 	});
+
+	it('resolves multi-role baselines independently of role order', async () => {
+		const forward = await resolvePermissions('member,admin');
+		const reverse = await resolvePermissions('admin,member');
+
+		expect(reverse).toEqual(forward);
+	});
 });
 
 describe('billing entitlements', () => {
@@ -212,14 +226,12 @@ describe('notifications: audience targeting', () => {
 
 		const forTarget = await listNotifications({
 			userId: target.id,
-			organizationIds: [],
-			roles: [],
+			memberships: [],
 			isPlatformAdmin: false
 		});
 		const forOther = await listNotifications({
 			userId: other.id,
-			organizationIds: [],
-			roles: [],
+			memberships: [],
 			isPlatformAdmin: false
 		});
 
@@ -244,19 +256,39 @@ describe('notifications: audience targeting', () => {
 
 		const adminRows = await listNotifications({
 			userId: admin.id,
-			organizationIds: [org.id],
-			roles: ['admin'],
+			memberships: [{ organizationId: org.id, roles: ['admin'] }],
 			isPlatformAdmin: false
 		});
 		const plainRows = await listNotifications({
 			userId: plain.id,
-			organizationIds: [org.id],
-			roles: ['member'],
+			memberships: [{ organizationId: org.id, roles: ['member'] }],
 			isPlatformAdmin: false
 		});
 
 		expect(adminRows.filter((row) => row.id === id)).toHaveLength(1);
 		expect(plainRows.filter((row) => row.id === id)).toHaveLength(0);
+	});
+
+	it('matches individual roles from a comma-separated membership', async () => {
+		const org = await seedOrg();
+		const memberUser = await seedUser();
+		await seedMember(org.id, memberUser.id, 'member,admin');
+
+		const memberships = await getMemberMemberships(memberUser.id, [org.id]);
+		const id = await notify({
+			audience: 'tenant_role',
+			organizationId: org.id,
+			roles: ['admin'],
+			title: 'Admin notice',
+			body: 'Must match the admin role within the combined membership'
+		});
+		const rows = await listNotifications({
+			userId: memberUser.id,
+			memberships,
+			isPlatformAdmin: false
+		});
+
+		expect(rows.filter((row) => row.id === id)).toHaveLength(1);
 	});
 
 	it('hides platform notices from non-platform-admins', async () => {
@@ -267,20 +299,83 @@ describe('notifications: audience targeting', () => {
 
 		const asRegular = await listNotifications({
 			userId: regular.id,
-			organizationIds: [],
-			roles: [],
+			memberships: [],
 			isPlatformAdmin: false
 		});
 		const asPlatformAdmin = await listNotifications({
 			userId: admin.id,
-			organizationIds: [],
-			roles: [],
+			memberships: [],
 			isPlatformAdmin: true
 		});
 
 		// Scope to this notice so the assertion is independent of other rows.
 		expect(asRegular.filter((row) => row.id === id)).toHaveLength(0);
 		expect(asPlatformAdmin.filter((row) => row.id === id)).toHaveLength(1);
+	});
+
+	it('keeps organization roles paired when listing, counting, and marking notifications read', async () => {
+		const target = await seedUser();
+		const adminOrg = await seedOrg();
+		const memberOrg = await seedOrg();
+		await seedMember(adminOrg.id, target.id, 'admin');
+		await seedMember(memberOrg.id, target.id, 'member');
+
+		const id = await notify({
+			audience: 'tenant_role',
+			organizationId: memberOrg.id,
+			roles: ['admin'],
+			title: 'Member org admin notice',
+			body: 'Must not reach an admin of another organization'
+		});
+		const scope = {
+			userId: target.id,
+			memberships: [
+				{ organizationId: adminOrg.id, roles: ['admin'] },
+				{ organizationId: memberOrg.id, roles: ['member'] }
+			],
+			isPlatformAdmin: false
+		};
+
+		const visible = await listNotifications(scope);
+		const unreadCount = await countUnread(scope);
+		await markAllRead(scope);
+		const readRows = await db
+			.select({ notificationId: notificationRead.notificationId })
+			.from(notificationRead)
+			.where(eq(notificationRead.userId, target.id));
+
+		expect({
+			visible: visible.some((row) => row.id === id),
+			unreadCount,
+			readCount: readRows.length
+		}).toEqual({ visible: false, unreadCount: 0, readCount: 0 });
+	});
+
+	it('does not create read state for a notification outside the caller scope', async () => {
+		const caller = await seedUser();
+		const foreignOrg = await seedOrg();
+		const foreignAdmin = await seedUser();
+		await seedMember(foreignOrg.id, foreignAdmin.id, 'admin');
+
+		const id = await notify({
+			audience: 'tenant_role',
+			organizationId: foreignOrg.id,
+			roles: ['admin'],
+			title: 'Foreign admin notice',
+			body: 'Private to another organization'
+		});
+
+		const marked = await markRead(id, {
+			userId: caller.id,
+			memberships: [],
+			isPlatformAdmin: false
+		});
+		const readRows = await db
+			.select({ notificationId: notificationRead.notificationId })
+			.from(notificationRead)
+			.where(and(eq(notificationRead.notificationId, id), eq(notificationRead.userId, caller.id)));
+
+		expect({ marked, readCount: readRows.length }).toEqual({ marked: false, readCount: 0 });
 	});
 
 	it('tracks read state per user without affecting others', async () => {
@@ -300,27 +395,28 @@ describe('notifications: audience targeting', () => {
 
 		const before = await listNotifications({
 			userId: first.id,
-			organizationIds: [org.id],
-			roles: ['admin'],
+			memberships: [{ organizationId: org.id, roles: ['admin'] }],
 			isPlatformAdmin: false,
 			filter: 'unread'
 		});
 		expect(before.filter((row) => row.id === id)).toHaveLength(1);
 
 		const { markRead } = await import('#lib/server/notifications/index.ts');
-		await markRead(id, first.id);
+		await markRead(id, {
+			userId: first.id,
+			memberships: [{ organizationId: org.id, roles: ['admin'] }],
+			isPlatformAdmin: false
+		});
 
 		const afterFirst = await listNotifications({
 			userId: first.id,
-			organizationIds: [org.id],
-			roles: ['admin'],
+			memberships: [{ organizationId: org.id, roles: ['admin'] }],
 			isPlatformAdmin: false,
 			filter: 'unread'
 		});
 		const secondStillUnread = await listNotifications({
 			userId: second.id,
-			organizationIds: [org.id],
-			roles: ['admin'],
+			memberships: [{ organizationId: org.id, roles: ['admin'] }],
 			isPlatformAdmin: false,
 			filter: 'unread'
 		});

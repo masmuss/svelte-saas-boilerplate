@@ -51,6 +51,12 @@ Thin SvelteKit controllers in `src/routes`, feature views in `src/lib/features`,
 
 Request-scoped `locals` are populated once in `src/hooks.server.ts`. See `docs/architecture.md` for the full layer map and dependency rules.
 
+## Billing scope
+
+The billing module is a provider-agnostic entitlement foundation. It stores plans, subscriptions, limits, features, and usage records, but it does not process payments.
+
+It does not include checkout, a customer portal, signed webhook handling, event idempotency, upgrade/downgrade/cancel flows, provider synchronization, or atomic quota enforcement. Add those before using it as a production payment integration.
+
 ## Testing
 
 ```bash
