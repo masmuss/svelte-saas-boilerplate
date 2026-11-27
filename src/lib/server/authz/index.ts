@@ -2,11 +2,11 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
 import { organizationRole } from '#lib/server/db/auth.schema.ts';
 import { roles } from '#lib/server/authz/statements.ts';
+import { hasPermission as hasPermissionShared } from '#lib/permissions.ts';
+import type { Permission, PermissionSet } from '#lib/permissions.ts';
 
-export type PermissionSet = Record<string, string[]>;
-
-/** A single `<resource>:<action>` pair, e.g. `project:create`. */
-export type Permission = `${string}:${string}`;
+export type { Permission, PermissionSet } from '#lib/permissions.ts';
+export const hasPermission = hasPermissionShared;
 
 /**
  * Normalizes the code-defined baseline for `role` into a mutable
@@ -79,13 +79,6 @@ export async function resolvePermissions(
 	}
 
 	return merged;
-}
-
-/** Tests a resolved permission set for a single permission. */
-export function hasPermission(permissions: PermissionSet, permission: Permission): boolean {
-	const [resource, action] = permission.split(':');
-	if (!resource || !action) return false;
-	return permissions[resource]?.includes(action) ?? false;
 }
 
 /** Convenience wrapper: resolves then tests in one call. */

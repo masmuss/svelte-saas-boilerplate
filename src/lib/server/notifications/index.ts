@@ -1,4 +1,4 @@
-import { and, arrayOverlaps, desc, eq, inArray, or, sql } from 'drizzle-orm';
+import { and, arrayOverlaps, count, desc, eq, inArray, or, sql } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
 import { member } from '#lib/server/db/auth.schema.ts';
 import { notification, notificationRead } from '#lib/server/db/notification.schema.ts';
@@ -51,14 +51,19 @@ export interface ListNotificationsInput {
 	filter?: 'all' | 'unread';
 }
 
-/**
- * Lists notifications addressed to the caller. Every branch is scoped to
- * `userId` or to organizations the caller is actually a member of.
- */
-export async function listNotifications(input: ListNotificationsInput) {
+type NotificationScope = Omit<ListNotificationsInput, 'limit' | 'offset' | 'filter'>;
+
+function readJoin(userId: string) {
+	return and(
+		eq(notificationRead.notificationId, notification.id),
+		eq(notificationRead.userId, userId)
+	);
+}
+
+function notificationWhere(input: NotificationScope, filter: 'all' | 'unread') {
 	const conditions = [];
 
-	if (input.filter === 'unread') {
+	if (filter === 'unread') {
 		conditions.push(sql`${notificationRead.userId} is null`);
 	}
 
@@ -75,7 +80,15 @@ export async function listNotifications(input: ListNotificationsInput) {
 		audienceConditions.push(eq(notification.audience, 'platform'));
 	}
 
-	const rows = await db
+	return and(or(...audienceConditions), ...conditions);
+}
+
+/**
+ * Lists notifications addressed to the caller. Every branch is scoped to
+ * `userId` or to organizations the caller is actually a member of.
+ */
+export async function listNotifications(input: ListNotificationsInput) {
+	return db
 		.select({
 			id: notification.id,
 			title: notification.title,
@@ -88,27 +101,22 @@ export async function listNotifications(input: ListNotificationsInput) {
 			readAt: notificationRead.readAt
 		})
 		.from(notification)
-		.leftJoin(
-			notificationRead,
-			and(
-				eq(notificationRead.notificationId, notification.id),
-				eq(notificationRead.userId, input.userId)
-			)
-		)
-		.where(and(or(...audienceConditions), ...conditions))
+		.leftJoin(notificationRead, readJoin(input.userId))
+		.where(notificationWhere(input, input.filter ?? 'all'))
 		.orderBy(desc(notification.createdAt))
 		.limit(input.limit ?? 50)
 		.offset(input.offset ?? 0);
-
-	return rows;
 }
 
-/** Unread badge count for the caller. */
-export async function countUnread(
-	input: Omit<ListNotificationsInput, 'limit' | 'offset' | 'filter'>
-) {
-	const rows = await listNotifications({ ...input, filter: 'unread', limit: 1000 });
-	return rows.length;
+/** Unread badge count for the caller. Uses SQL COUNT instead of a row cap. */
+export async function countUnread(input: NotificationScope): Promise<number> {
+	const [row] = await db
+		.select({ value: count() })
+		.from(notification)
+		.leftJoin(notificationRead, readJoin(input.userId))
+		.where(notificationWhere(input, 'unread'));
+
+	return row?.value ?? 0;
 }
 
 /** Marks one notification read. Scoped by `userId`, so ids cannot be replayed. */
@@ -123,10 +131,13 @@ export async function markRead(notificationId: string, userId: string): Promise<
 }
 
 /** Marks every notification currently visible to the caller as read. */
-export async function markAllRead(
-	input: Omit<ListNotificationsInput, 'limit' | 'offset' | 'filter'>
-): Promise<number> {
-	const rows = await listNotifications({ ...input, filter: 'unread', limit: 1000 });
+export async function markAllRead(input: NotificationScope): Promise<number> {
+	const rows = await db
+		.select({ id: notification.id })
+		.from(notification)
+		.leftJoin(notificationRead, readJoin(input.userId))
+		.where(notificationWhere(input, 'unread'));
+
 	if (rows.length === 0) return 0;
 
 	await db

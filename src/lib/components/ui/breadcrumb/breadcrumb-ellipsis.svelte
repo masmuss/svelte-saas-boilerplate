@@ -18,6 +18,6 @@
 	class={cn('flex size-5 items-center justify-center [&>svg]:size-4', className)}
 	{...restProps}
 >
-	<DotsThreeIcon />
+	<DotsThreeIcon aria-hidden="true" />
 	<span class="sr-only">More</span>
 </span>

@@ -1,4 +1,4 @@
-import { index, integer, pgTable, text } from 'drizzle-orm/pg-core';
+import { index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 import { organization } from './auth.schema';
 
 /**
@@ -16,4 +16,25 @@ export const task = pgTable(
 			.references(() => organization.id, { onDelete: 'cascade' })
 	},
 	(table) => [index('task_organization_id_idx').on(table.organizationId)]
+);
+
+export const project = pgTable(
+	'project',
+	{
+		id: text('id').primaryKey(),
+		organizationId: text('organization_id')
+			.notNull()
+			.references(() => organization.id, { onDelete: 'cascade' }),
+		name: text('name').notNull(),
+		description: text('description'),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { withTimezone: true })
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull()
+	},
+	(table) => [
+		index('project_organization_id_idx').on(table.organizationId),
+		uniqueIndex('project_organization_name_idx').on(table.organizationId, table.name)
+	]
 );

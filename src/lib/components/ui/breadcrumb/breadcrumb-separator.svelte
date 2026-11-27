@@ -22,6 +22,6 @@
 	{#if children}
 		{@render children?.()}
 	{:else}
-		<CaretRightIcon class="cn-rtl-flip" />
+		<CaretRightIcon class="cn-rtl-flip" aria-hidden="true" />
 	{/if}
 </li>

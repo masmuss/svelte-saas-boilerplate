@@ -1,56 +1,83 @@
-# sv
+# Svelte SaaS Boilerplate
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+SvelteKit 2 / Svelte 5 starter with authentication, organizations, RBAC, billing entitlements and notifications.
 
-## Creating a project
+## Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- bun as the package manager (`bun.lock` is the only lockfile)
+- SvelteKit 2, Svelte 5 runes
+- shadcn-svelte (vega style, phosphor icons) + Tailwind CSS 4
+- Better Auth with Drizzle ORM and PostgreSQL
+- Vitest (unit, component and integration projects)
 
-```sh
-# create a new project
-npx sv create my-app
+## Setup
+
+```bash
+bun install
+cp .env.example .env
+bun run db:start
+bun run db:migrate
+bun run db:seed
+bun run dev
 ```
 
-To recreate this project with the same configuration:
+Set `DATABASE_URL`, `ORIGIN` and `BETTER_AUTH_SECRET` in `.env`. Email defaults to the `console` provider; set `EMAIL_PROVIDER=resend` and `RESEND_API_KEY` to send real mail.
 
-```sh
-# recreate this project
-bun x sv@1.1.1 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:none" drizzle="database:postgresql+postgresql:postgres.js+docker:yes" better-auth="demo:password" experimental="features:async,remoteFunctions" --install bun svelte-boilerplate
+## Scripts
+
+| Command              | Purpose                            |
+| -------------------- | ---------------------------------- |
+| `bun run dev`        | Start the dev server               |
+| `bun run build`      | Production build                   |
+| `bun run preview`    | Preview the production build       |
+| `bun run check`      | `svelte-kit sync` + `svelte-check` |
+| `bun run lint`       | Prettier check + ESLint            |
+| `bun run format`     | Prettier write                     |
+| `bun run test`       | Run all Vitest projects            |
+| `bun run test:e2e`   | Run Playwright smoke tests         |
+| `bun run db:migrate` | Apply generated Drizzle migrations |
+| `bun run db:seed`    | Seed a local demo workspace        |
+
+## Architecture
+
+Thin SvelteKit controllers in `src/routes`, feature views in `src/lib/features`, shared UI in `src/lib/components`, and server-only capabilities in `src/lib/server`.
+
+- `src/lib/server/auth` — session helpers and auth error mapping
+- `src/lib/server/authz` — roles, permission vocabulary and resolution
+- `src/lib/server/billing` — plan entitlements and limits
+- `src/lib/server/email` — provider port with console and Resend adapters
+- `src/lib/server/notifications` — audience-targeted notifications
+- `src/lib/server/db` — Drizzle schemas and client
+
+Request-scoped `locals` are populated once in `src/hooks.server.ts`. See `docs/architecture.md` for the full layer map and dependency rules.
+
+## Testing
+
+```bash
+bun run check
+bun run lint
+bun run test
+bun run test:e2e
 ```
 
-## Adding features
+Database-backed integration tests live in `tests/integration` and expect the Postgres container from `compose.yaml` to be running.
 
-Add features to your project with `sv add`:
+## Deployment
 
-```sh
-npx sv add
+The build uses `@sveltejs/adapter-node` and produces a self-hosted server in `build/`.
+
+Required environment variables: `DATABASE_URL`, `ORIGIN` and `BETTER_AUTH_SECRET`. For real email delivery, also set `EMAIL_PROVIDER=resend` and `RESEND_API_KEY`.
+
+```bash
+bun run db:migrate
+HOST=0.0.0.0 PORT=3000 node build
 ```
 
-For example, to add Tailwind CSS:
+CI runs migrations, `check`, `lint`, tests and the production build on pushes to `dev`/`main` and on pull requests.
 
-```sh
-npx sv add tailwindcss
-```
+## Docs
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- `docs/architecture.md` — layer map and dependency rules
+- `docs/adr/0001-feature-based-mvvm.md` — architecture decision
+- `docs/ui-ux-audit.md` — accessibility audit, benchmarks and backlog
+- `docs/runbook.md` — setup, deployment, security and operations notes
