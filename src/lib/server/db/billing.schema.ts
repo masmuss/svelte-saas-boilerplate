@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
 	boolean,
 	index,
@@ -82,7 +83,30 @@ export const subscription = pgTable(
 	(table) => [
 		index('subscription_organization_id_idx').on(table.organizationId),
 		index('subscription_status_idx').on(table.status),
-		uniqueIndex('subscription_provider_id_unique').on(table.providerSubscriptionId)
+		uniqueIndex('subscription_provider_id_unique').on(table.providerSubscriptionId),
+		uniqueIndex('subscription_one_active_per_organization_idx')
+			.on(table.organizationId)
+			.where(sql`${table.status} in ('active', 'trialing')`)
+	]
+);
+
+export const billingEvent = pgTable(
+	'billing_event',
+	{
+		id: text('id').primaryKey(),
+		provider: text('provider').notNull(),
+		eventId: text('event_id').notNull(),
+		eventType: text('event_type').notNull(),
+		organizationId: text('organization_id')
+			.notNull()
+			.references(() => organization.id, { onDelete: 'cascade' }),
+		payload: jsonb('payload').$type<Record<string, unknown>>().notNull().default({}),
+		processedAt: timestamp('processed_at', { withTimezone: true }).defaultNow().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+	},
+	(table) => [
+		uniqueIndex('billing_event_provider_event_unique').on(table.provider, table.eventId),
+		index('billing_event_organization_id_idx').on(table.organizationId)
 	]
 );
 

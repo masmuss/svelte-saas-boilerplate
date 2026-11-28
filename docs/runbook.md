@@ -31,6 +31,7 @@ Integration tests expect the Postgres container from `compose.yaml` on port `543
 - Generate a migration with `bun run db:generate`.
 - Apply with `bun run db:migrate`.
 - Commit both SQL and Drizzle metadata.
+- The active-subscription unique index intentionally fails when duplicate `active` or `trialing` rows exist. Resolve those duplicates explicitly before applying the migration.
 
 ## Deployment
 
@@ -59,5 +60,6 @@ HOST=0.0.0.0 PORT=3000 node build
 ## Security notes
 
 - Auth form actions and Better Auth client endpoints are rate limited in-process. Use a shared store such as Redis only when running multiple instances.
+- Billing provider adapters must verify webhook signatures and discard stale or out-of-order snapshots before calling `syncSubscriptionFromEvent()`. Resolve quota limits from current entitlements before calling `consumeQuota()`.
 - `bun audit` reports moderate dev-only advisories in `esbuild` and `minimatch`; transitive ranges currently block an in-range fix. Review again when upstream ranges change.
 - Security headers, CSP, HSTS and structured server error logging are configured in `src/hooks.server.ts`.
