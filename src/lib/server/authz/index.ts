@@ -30,7 +30,9 @@ function baselinePermissions(role: string): PermissionSet {
 
 function mergePermissions(merged: PermissionSet, additions: PermissionSet): void {
 	for (const [resource, actions] of Object.entries(additions)) {
-		merged[resource] = [...new Set([...(merged[resource] ?? []), ...actions])].sort();
+		merged[resource] = [...new Set([...(merged[resource] ?? []), ...actions])].sort((left, right) =>
+			left.localeCompare(right, 'en')
+		);
 	}
 }
 
@@ -53,7 +55,7 @@ export async function resolvePermissions(
 		.split(',')
 		.map((key) => key.trim())
 		.filter(Boolean)
-		.sort();
+		.sort((left, right) => left.localeCompare(right, 'en'));
 	const merged: PermissionSet = {};
 
 	for (const key of roleKeys) {
