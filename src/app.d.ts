@@ -9,7 +9,7 @@ declare global {
 		interface Locals {
 			user?: User & { platformRole?: string | null };
 			session?: Session & { activeOrganizationId?: string | null };
-			/** Active tenant, or null when the session has no active organization. */
+			/** Active tenant with verified membership, or null when unavailable. */
 			organizationId?: string | null;
 			/** Role the session user holds in `organizationId`. */
 			role?: string | null;

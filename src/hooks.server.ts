@@ -57,30 +57,29 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 				platformRole !== null && (PLATFORM_ROLES as readonly string[]).includes(platformRole);
 
 			const organizationId = session.session.activeOrganizationId ?? null;
-			event.locals.organizationId = organizationId;
+			event.locals.organizationId = null;
 			event.locals.role = null;
 			event.locals.permissions = {};
 			event.locals.entitlements = NO_ENTITLEMENTS;
 
 			if (organizationId) {
-				const [membership, entitlements] = await Promise.all([
-					db
-						.select({ role: member.role })
-						.from(member)
-						.where(
-							and(eq(member.userId, session.user.id), eq(member.organizationId, organizationId))
-						)
-						.limit(1)
-						.then((rows) => rows[0] ?? null),
-					getEntitlements(organizationId)
-				]);
+				const membership = await db
+					.select({ role: member.role })
+					.from(member)
+					.where(and(eq(member.userId, session.user.id), eq(member.organizationId, organizationId)))
+					.limit(1)
+					.then((rows) => rows[0] ?? null);
 
 				if (membership) {
+					event.locals.organizationId = organizationId;
 					event.locals.role = membership.role;
-					event.locals.permissions = await resolvePermissions(membership.role, organizationId);
+					const [permissions, entitlements] = await Promise.all([
+						resolvePermissions(membership.role, organizationId),
+						getEntitlements(organizationId)
+					]);
+					event.locals.permissions = permissions;
+					event.locals.entitlements = entitlements;
 				}
-
-				event.locals.entitlements = entitlements;
 			}
 		}
 	}
