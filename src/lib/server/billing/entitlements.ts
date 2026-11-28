@@ -1,4 +1,4 @@
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import { db } from '#lib/server/db/index.ts';
 import { plan, subscription } from '#lib/server/db/billing.schema.ts';
 import { ACTIVE_SUBSCRIPTION_STATUSES } from '#lib/server/db/billing.schema.ts';
@@ -47,6 +47,7 @@ export async function getEntitlements(organizationId: string): Promise<Entitleme
 				inArray(subscription.status, ACTIVE_SUBSCRIPTION_STATUSES)
 			)
 		)
+		.orderBy(desc(subscription.updatedAt), desc(subscription.id))
 		.limit(1);
 
 	const row = rows[0];

@@ -44,7 +44,7 @@ Thin SvelteKit controllers in `src/routes`, feature views in `src/lib/features`,
 
 - `src/lib/server/auth` — session helpers and auth error mapping
 - `src/lib/server/authz` — roles, permission vocabulary and resolution
-- `src/lib/server/billing` — plan entitlements and limits
+- `src/lib/server/billing`: provider-agnostic entitlements, transactional sync, event idempotency, and atomic quotas
 - `src/lib/server/email` — provider port with console and Resend adapters
 - `src/lib/server/notifications` — audience-targeted notifications
 - `src/lib/server/db` — Drizzle schemas and client
@@ -53,9 +53,9 @@ Request-scoped `locals` are populated once in `src/hooks.server.ts`. See `docs/a
 
 ## Billing scope
 
-The billing module is a provider-agnostic entitlement foundation. It stores plans, subscriptions, limits, features, and usage records, but it does not process payments.
+The billing module is a provider-agnostic entitlement foundation. It stores plans, subscriptions, limits, features, and usage records. It also enforces one active or trialing subscription per organization, applies subscription snapshots transactionally with per-provider event idempotency, and provides atomic quota consumption.
 
-It does not include checkout, a customer portal, signed webhook handling, event idempotency, upgrade/downgrade/cancel flows, provider synchronization, or atomic quota enforcement. Add those before using it as a production payment integration.
+It does not process payments or include provider adapters, signature verification, checkout, a customer portal, subscription-change UI, or provider-specific synchronization jobs. Provider adapters must verify signatures and discard stale or out-of-order snapshots before calling `syncSubscriptionFromEvent()`.
 
 ## Testing
 
