@@ -28,6 +28,14 @@ function baselinePermissions(role: string): PermissionSet {
 	return result;
 }
 
+function mergePermissions(merged: PermissionSet, additions: PermissionSet): void {
+	for (const [resource, actions] of Object.entries(additions)) {
+		merged[resource] = [...new Set([...(merged[resource] ?? []), ...actions])].sort((left, right) =>
+			left.localeCompare(right, 'en')
+		);
+	}
+}
+
 /**
  * Resolves the effective permission set for a member role, merging the
  * code-defined baseline in `statements.ts` with any per-tenant overrides stored
@@ -43,11 +51,15 @@ export async function resolvePermissions(
 	role: string,
 	organizationId?: string
 ): Promise<PermissionSet> {
-	const roleKeys = role.split(',').filter(Boolean);
+	const roleKeys = role
+		.split(',')
+		.map((key) => key.trim())
+		.filter(Boolean)
+		.sort((left, right) => left.localeCompare(right, 'en'));
 	const merged: PermissionSet = {};
 
 	for (const key of roleKeys) {
-		Object.assign(merged, baselinePermissions(key));
+		mergePermissions(merged, baselinePermissions(key));
 	}
 
 	if (!organizationId) return merged;
@@ -73,9 +85,7 @@ export async function resolvePermissions(
 			continue;
 		}
 
-		for (const [resource, actions] of Object.entries(parsed)) {
-			merged[resource] = [...new Set([...(merged[resource] ?? []), ...actions])];
-		}
+		mergePermissions(merged, parsed);
 	}
 
 	return merged;

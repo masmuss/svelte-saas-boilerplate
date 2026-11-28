@@ -5,7 +5,7 @@ import { auth } from '#lib/server/auth.ts';
 import { requireUser } from '#lib/server/auth/guards.ts';
 import {
 	countUnread,
-	getMemberRoles,
+	getMemberMemberships,
 	listNotifications,
 	markAllRead,
 	markRead
@@ -16,12 +16,11 @@ async function scopeFor(event: RequestEvent) {
 	const user = requireUser(event);
 	const organizations = await auth.api.listOrganizations({ headers: event.request.headers });
 	const organizationIds = organizations.map((organization) => organization.id);
-	const roles = await getMemberRoles(user.id, organizationIds);
+	const memberships = await getMemberMemberships(user.id, organizationIds);
 
 	return {
 		userId: user.id,
-		organizationIds,
-		roles,
+		memberships,
 		isPlatformAdmin: event.locals.isPlatformAdmin ?? false
 	};
 }
@@ -55,7 +54,8 @@ export const actions: Actions = {
 		const id = formData.get('id');
 		if (typeof id !== 'string' || !id) return fail(400, { message: 'Missing notification id.' });
 
-		await markRead(id, (await scopeFor(event)).userId);
+		const marked = await markRead(id, await scopeFor(event));
+		if (!marked) return fail(404, { message: 'Notification not found.' });
 		return { success: true };
 	},
 

@@ -40,11 +40,14 @@ export async function notify(input: NotifyInput): Promise<string> {
 	return id;
 }
 
+export interface MemberMembership {
+	organizationId: string;
+	roles: string[];
+}
+
 export interface ListNotificationsInput {
 	userId: string;
-	organizationIds: string[];
-	/** Roles the user holds in the tenant, e.g. ["owner", "admin"]. */
-	roles: string[];
+	memberships: MemberMembership[];
 	isPlatformAdmin: boolean;
 	limit?: number;
 	offset?: number;
@@ -67,13 +70,18 @@ function notificationWhere(input: NotificationScope, filter: 'all' | 'unread') {
 		conditions.push(sql`${notificationRead.userId} is null`);
 	}
 
+	const membershipConditions = input.memberships
+		.filter((membership) => membership.roles.length > 0)
+		.map((membership) =>
+			and(
+				eq(notification.audience, 'tenant_role'),
+				eq(notification.organizationId, membership.organizationId),
+				arrayOverlaps(notification.roles, membership.roles)
+			)
+		);
 	const audienceConditions = [
 		and(eq(notification.audience, 'user'), eq(notification.userId, input.userId)),
-		and(
-			eq(notification.audience, 'tenant_role'),
-			inArray(notification.organizationId, input.organizationIds),
-			input.roles.length > 0 ? arrayOverlaps(notification.roles, input.roles) : undefined
-		)
+		...membershipConditions
 	];
 
 	if (input.isPlatformAdmin) {
@@ -119,15 +127,27 @@ export async function countUnread(input: NotificationScope): Promise<number> {
 	return row?.value ?? 0;
 }
 
-/** Marks one notification read. Scoped by `userId`, so ids cannot be replayed. */
-export async function markRead(notificationId: string, userId: string): Promise<void> {
-	await db
+/** Marks one notification read only when it is visible to the caller. */
+export async function markRead(notificationId: string, input: NotificationScope): Promise<boolean> {
+	const rows = await db
 		.insert(notificationRead)
-		.values({ notificationId, userId })
+		.select(
+			db
+				.select({
+					notificationId: notification.id,
+					userId: sql<string>`${input.userId}`.as('user_id'),
+					readAt: sql<Date>`now()`.as('read_at')
+				})
+				.from(notification)
+				.where(and(eq(notification.id, notificationId), notificationWhere(input, 'all')))
+		)
 		.onConflictDoUpdate({
 			target: [notificationRead.notificationId, notificationRead.userId],
 			set: { readAt: new Date() }
-		});
+		})
+		.returning({ notificationId: notificationRead.notificationId });
+
+	return rows.length > 0;
 }
 
 /** Marks every notification currently visible to the caller as read. */
@@ -148,14 +168,32 @@ export async function markAllRead(input: NotificationScope): Promise<number> {
 	return rows.length;
 }
 
-/** Roles the user holds across the given organizations, for audience matching. */
-export async function getMemberRoles(userId: string, organizationIds: string[]): Promise<string[]> {
+/** Roles the user holds in each organization, for audience matching. */
+export async function getMemberMemberships(
+	userId: string,
+	organizationIds: string[]
+): Promise<MemberMembership[]> {
 	if (organizationIds.length === 0) return [];
 
 	const rows = await db
-		.selectDistinct({ role: member.role })
+		.selectDistinct({ organizationId: member.organizationId, role: member.role })
 		.from(member)
 		.where(and(eq(member.userId, userId), inArray(member.organizationId, organizationIds)));
+	const rolesByOrganization = new Map<string, Set<string>>();
 
-	return rows.map((row) => row.role);
+	for (const row of rows) {
+		const roles = rolesByOrganization.get(row.organizationId) ?? new Set<string>();
+		for (const role of row.role
+			.split(',')
+			.map((value) => value.trim())
+			.filter(Boolean)) {
+			roles.add(role);
+		}
+		rolesByOrganization.set(row.organizationId, roles);
+	}
+
+	return [...rolesByOrganization].map(([organizationId, roles]) => ({
+		organizationId,
+		roles: [...roles]
+	}));
 }

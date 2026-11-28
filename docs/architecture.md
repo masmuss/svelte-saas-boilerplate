@@ -52,10 +52,12 @@ Permission checks use the pure `hasPermission` helper in `src/lib/permissions.ts
 
 - `auth` — Better Auth setup, guards, error mapping and client DTOs
 - `authz` — roles, permission vocabulary and per-tenant overrides
-- `billing` — entitlements and plan limits
+- `billing` — provider-agnostic entitlements, transactional snapshot sync, event idempotency, and atomic quotas
 - `email` — provider port with console and Resend adapters, outbox persistence
 - `notifications` — audience-targeted notices with per-user read state
 - `db` — Drizzle client and segmented schemas
+
+The billing module does not integrate with a payment provider yet. Provider adapters, signature verification, checkout, customer portal, subscription-change UI, and provider-specific synchronization jobs remain implementation work. Adapters must verify signatures and discard stale or out-of-order snapshots before calling `syncSubscriptionFromEvent()`.
 
 ## Conventions
 

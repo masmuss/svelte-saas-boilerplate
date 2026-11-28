@@ -15,6 +15,20 @@
       "when": 1795273512318,
       "tag": "0001_sticky_microbe",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795825092577,
+      "tag": "0002_stiff_marvel_zombies",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795825215900,
+      "tag": "0003_early_doctor_spectrum",
+      "breakpoints": true
     }
   ]
 }
