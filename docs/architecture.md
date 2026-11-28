@@ -52,7 +52,7 @@ Permission checks use the pure `hasPermission` helper in `src/lib/permissions.ts
 
 - `auth` — Better Auth setup, guards, error mapping and client DTOs
 - `authz` — roles, permission vocabulary and per-tenant overrides
-- `billing`: provider-agnostic entitlement foundation for plans, limits, features, and usage records
+- `billing` — provider-agnostic entitlement foundation for plans, limits, features, and usage records
 - `email` — provider port with console and Resend adapters, outbox persistence
 - `notifications` — audience-targeted notices with per-user read state
 - `db` — Drizzle client and segmented schemas
