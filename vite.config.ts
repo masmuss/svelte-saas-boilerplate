@@ -42,6 +42,8 @@ export default defineConfig({
 				test: {
 					name: 'server',
 					environment: 'node',
+					// Integration tests share one database and truncate tables.
+					fileParallelism: false,
 					include: ['src/**/*.{test,spec}.{js,ts}', 'tests/**/*.{test,spec}.{js,ts}'],
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}
